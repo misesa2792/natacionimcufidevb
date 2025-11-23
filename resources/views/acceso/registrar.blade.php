@@ -1,7 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.pago')
 
 @section('content')
 
+  <div class="row mb-3 mt-3">
+      <div class="col-12 text-center">
+          <a href="{{ route($pageModule .'.pagar') }}" >
+              << Cancelar acción
+          </a>
+      </div>
+  </div>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
@@ -16,27 +23,39 @@
     });
 </script>
 
-<main class="row">
-  <div class="col-12">
-    <div class="page-header">
-      <div class="page-title">
-          <h4 class="text-blue-900"> <strong>{{ $pageTitle }}</strong> <small class="text-gray-400"><i>{{ $pageNote }}</i></small></h4>
-      </div>
-      
-      <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="{{ URL::to('dashboard') }}"> <i class="fa fa-home s-18"></i> </a></li>
-              <li class="breadcrumb-item">
-                  <a href="{{ route($pageModule.'.index') }}" class="text-decoration-none"><i>{{ $pageTitle }}</i></a>    
-              </li>
-              <li class="breadcrumb-item active"><i class="ses-text-muted">Agregar</i></li>
-          </ol>
-      </nav>
-    </div>
-  
+<style>
+.alert-soft-warning {
+    background: #fff8e1;
+    border-left: 4px solid #f4b400;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #7a5a00;
+}
+</style>
+
+   <div class="alert-soft-warning mt-3">
+    <strong class="d-block mb-1">Importante</strong>
+
+    <p class="mb-1">
+        Todos los campos del formulario son obligatorios para completar el registro del nadador.
+    </p>
+
+    <p class="mb-0">
+        La <strong>CURP del nadador</strong> será clave para realizar pagos en línea, consultar suscripciones
+        activas y revisar los horarios asignados.
+    </p>
+
+      <p class="mb-0">
+        <strong>IMCUFIDE Valle de Bravo</strong> verificará la autenticidad de la información proporcionada.  
+        En caso de detectar datos incorrectos o ficticios, el registro podrá invalidarse.  
+    </p>
+</div>
+
+
     <form action="{{ route($pageModule.'.store') }}" method="POST">
        @csrf
-    <div class="container mt-3">
+    <div class="row mt-3">
 
         <div class="col-12">
             <div class="sbox">
@@ -46,19 +65,19 @@
               <div class="sbox-content"> 
 
                   <div class="mb-3">
-                    <label class="form-label fw-bold ses-text-muted">Nombre del Nadador:</label>
+                    <label class="form-label fw-bold ses-text-muted">Nombre del Nadador :</label>
                     <input type="text" name="nombre" value="{{ old('nombre') }}" class="form-control" placeholder="Ingresa nombre completo" required>
                   </div>
                    
                   <div class="row">
-                    <div class="col-8">
+                    <div class="col-12">
                       <div class="mb-3">
                         <label class="form-label fw-bold ses-text-muted">CURP:</label>
                         <input type="text" name="curp" value="{{ old('curp') }}" class="form-control" placeholder="Ingresa CURP - 18 dígitos" required>
                       </div>
                     </div>
                     
-                    <div class="col-4">
+                    <div class="col-12">
                       <div class="mb-3">
                         <label class="form-label fw-bold ses-text-muted">Fecha de nacimiento:</label>
                         <input type="text" name="fecha_nacimiento" value="{{ old('fecha_nacimiento') }}" class="form-control date" placeholder="0000-00-00" required>
@@ -148,24 +167,18 @@
                 </select>
               </div>
 
-              <div class="mt-3 text-center">
-                <button type="button"
-                    onclick="location.href='{{ route($pageModule.'.index') }}'" class="btn btn-sm btn-white">
-                    <i class="fa fa-arrow-circle-left"></i> Cancelar
-                  </button>
-                <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="fa fa-save"></i> Guardar</button>
-              </div>
+              
               
             </div>
+          </div>
+
+          <div class="mt-5 mb-5 text-center">
+                <button type="submit" name="save" class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm ses-text-white"><i class="bi bi-floppy"></i> Registrar Nadador</button>
           </div>
 
         </div>
     </div>
         </form>
-  </div>
-       
-
-</main>
 @section('plugins.Select2', true)
 <script>
     document.addEventListener('DOMContentLoaded', function () {

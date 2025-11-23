@@ -20,7 +20,7 @@
         Route::post('/update/{id}', 'update')->name('update');
     });
 
-     Route::controller(SuscripcionesController::class)->prefix('suscripciones')->name('suscripciones.')->group(function () {
+    Route::controller(SuscripcionesController::class)->prefix('suscripciones')->name('suscripciones.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/create/{id}', 'create')->name('create');
         Route::get('/view/{id}', 'view')->name('view');
@@ -28,9 +28,6 @@
         Route::post('/store/{id}', 'store')->name('store');
         Route::get('/edit/{id}', 'edit')->name('edit');
         Route::post('/update/{id}/ids/{ids}', 'update')->name('update');
-
-        Route::get('/success/{id}', 'success')->name('success');
-
     });
 
     Route::controller(NivelesController::class)->prefix('niveles')->name('niveles.')->group(function () {
@@ -40,3 +37,5 @@
         Route::get('/horarios/{id}', 'horarios')->name('horarios');
         Route::post('/update/{id}', 'update')->name('update');
     });
+
+    

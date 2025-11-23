@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.pago')
 
 @section('content')
 
     <style>
       
         .card {
-            padding: 25px 35px;
+            padding: 15px 25px;
             border-radius: 12px;
             box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
             animation: fadeIn 0.4s ease-in-out;
@@ -73,18 +73,10 @@
         .m-b-md{margin-bottom:15px;}
     </style>
 
-<div class="container">
-    <div class="row m-t">
-        <div class="col-md-4">
-            
-        </div>
-            
-        <div class="col-md-4">
-
             <div class="row mb-3 mt-3">
                 <div class="col-12 text-center">
-                    <a href="{{ route('suscripciones.view',$id) }}" >
-                        << Volver al área de pagos
+                    <a href="{{ route($pageModule .'.pagar') }}" >
+                        << Cancelar acción
                     </a>
                 </div>
             </div>
@@ -106,10 +98,10 @@
 
             <div class="card">
                 <label class="mt-3">Nadador</label>
-                <h5 class="m-b-md ses-text-blue">{{ $row->nombre }}</h5>
+                <div class="m-b-md ses-text-blue">{{ $row->nombre }}</div>
 
                 <label>Plan</label>
-                <h5 class="m-b-md">{{ $row->plan }}</h5>
+                <div class="m-b-md">{{ $row->plan }}</div>
             
                 <label>Monto a pagar</label>
                 <h5 class="m-b-md">${{ $row->precio }} MXN</h5>
@@ -118,7 +110,7 @@
                 <input type="text" name="email" value="{{ $row->titular_email }}" placeholder="Correo electrónico">
             </div>
 
-            <div class="card">
+            <div class="card mt-3">
 
                     <img src="{{ asset('storage/openpay.png') }}" alt="Openpay by BBVA">
 
@@ -147,25 +139,13 @@
                     </div>
                     
                     <label>Código de seguridad</label>
-                    <input type="text" data-openpay-card="cvv2" placeholder="3-4 dígitos" required>
+                    <input type="text" data-openpay-card="cvv2" placeholder="3 dígitos" required>
 
                     <button id="pay-button">Pagar ahora</button>
             </div>
             
             </form>
 
-            <div class="row m-t">
-                <div class="col-12 text-center">
-                    <a href="{{ route('suscripciones.view',$id) }}" >
-                        << Volver al área de pagos
-                    </a>
-                </div>
-            </div>
-
-
-        </div>
-    </div>
-</div>
 
 
 {{-- JS oficial de Openpay --}}

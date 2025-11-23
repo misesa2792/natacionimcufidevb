@@ -12,10 +12,16 @@ use Illuminate\Support\Facades\Log;
 
 use Illuminate\Support\Facades\DB;
 
+use App\Services\SecureTokenService;
+
 class OpenpayPaymentController extends Controller
 {
     protected $data = [];
-    public function __construct(protected OpenpayService $openpay) {}
+    protected SecureTokenService $secureToken;
+
+    public function __construct(protected OpenpayService $openpay, SecureTokenService $secureToken) {
+        $this->secureToken = $secureToken;
+    }
 
     // Muestra el formulario
     public function showCheckout(Request $request)
@@ -90,6 +96,8 @@ class OpenpayPaymentController extends Controller
                 $fecha_inicio = $base->toDateString();
                 $fecha_fin    = $base->copy()->addDays($row->duracion_dias)->toDateString();
 
+                $idSuscripcion = 0;
+
                 DB::beginTransaction();
 
                     $rowSuscripcion = Suscripciones::create([
@@ -106,7 +114,7 @@ class OpenpayPaymentController extends Controller
                     $idSuscripcion = $rowSuscripcion->idsuscripcion;
                 
                     // Guardar en BD
-                    Payment::create([
+                    $rowPayment = Payment::create([
                         'iduser'            => $userId,
                         'idsuscripcion'     => $idSuscripcion,
                         'provider'          => 'openpay',
@@ -120,7 +128,13 @@ class OpenpayPaymentController extends Controller
                     ]);
                 DB::commit();
 
-                return redirect()->route('suscripciones.success', $charge->id);
+               $sesToken = $this->secureToken->encode([
+                                                    'ids' => $idSuscripcion,
+                                                    'idp' => $rowPayment->idpayments,
+                                                    'key' => $charge->id,
+                                                ]);
+
+                return redirect()->route('acceso.success', ['id' => $charge->id, 'token' => $sesToken]);
         } catch (\Exception $e) {
             DB::rollBack();
 

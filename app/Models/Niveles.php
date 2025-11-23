@@ -13,6 +13,7 @@ class Niveles extends Model
     protected $fillable = [
         'active',
         'nombre',
+        'descripcion',
         'precio',
         'duracion_dias',
         'max_visitas_mes'

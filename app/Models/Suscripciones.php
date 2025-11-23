@@ -72,7 +72,7 @@ class Suscripciones extends Model
 		->limit(1)
 		->first();
 	}
-	public static function suscripcionesNadador($id)
+	public static function suscripcionesNadador($id, $limit = 3)
 	{
 		return DB::table('ses_suscripcion as s')
 			->join('ses_plan as p', 'p.idplan', '=', 's.idplan')
@@ -95,7 +95,7 @@ class Suscripciones extends Model
 			])
 			->where('s.idnadador', $id)
 			->orderBy('s.idsuscripcion', 'desc')
-			->limit(3)
+			->limit($limit)
 			->get();
 	}
 	public static function nadadorID($id)
@@ -124,6 +124,35 @@ class Suscripciones extends Model
 					'pa.descripcion as parentesco',
 				])
 				->where('n.idnadador', $id)
+				->first();
+	}
+	public static function nadadorSearchCurpID($curp)
+	{
+		return DB::table('ses_nadador as n')
+				->join('ses_plan as pl', 'pl.idplan', '=', 'n.idplan')
+				->join('ses_genero as g', 'g.idgenero', '=', 'n.idgenero')
+				->join('ses_parentesco as pa', 'pa.idparentesco', '=', 'n.idparentesco')
+				->select([
+					'n.idnadador as id',
+					'n.active',
+					'n.nombre',
+					'n.curp',
+					'n.fecha_nacimiento',
+					'g.descripcion as genero',
+					'n.domicilio',
+					'n.edad',
+					'pl.nombre as plan',
+					'pl.idplan',
+					'pl.precio',
+					'pl.duracion_dias',
+					'pl.max_visitas_mes',
+					'n.titular_nombre',
+					'n.titular_email',
+					'n.titular_telefono',
+					'n.titular_domicilio',
+					'pa.descripcion as parentesco',
+				])
+				->where('n.curp', $curp)
 				->first();
 	}
 	public static function dataPlanes()

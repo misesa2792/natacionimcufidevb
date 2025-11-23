@@ -58,7 +58,7 @@ class NadadoresController extends Controller
         $validated = $request->validate([
             'nombre'            => 'required',
             'fecha_nacimiento'  => 'required',
-            'edad'              => 'required',
+            'edad'              => 'required|integer|max:99',
             'idgenero'          => 'required',
             'domicilio'         => 'required',
             'curp'              => 'required|size:18',
@@ -71,14 +71,21 @@ class NadadoresController extends Controller
         ]);
 
         $validated['active'] = 1;
-
         $validated['nombre'] = strtoupper($request->nombre);
         $validated['curp'] = strtoupper($request->curp);
+
+        $existe = $this->model->where('curp', $validated['curp'])->exists();
+        if($existe){
+             return back()
+                        ->withErrors("El nadador con la CURP {$validated['curp']} ya se encuentra registrado en el sistema.")
+                        ->withInput();;
+        }
+
         $this->model->create($validated);
 
         return redirect()
             ->route($this->module.'.index')
-            ->with('messagetext','Información guardada correctamente')
+            ->with('messagetext','Nadador registrado exitosamente')
             ->with('msgstatus','success');
     }
 }

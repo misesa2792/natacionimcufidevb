@@ -1,13 +1,11 @@
 {{-- resources/views/dashboard.blade.php --}}
 @extends('adminlte::page')
 
-@section('title', config('app.name', 'Laravel'))
-
-{{-- Activa plugins que ya trae AdminLTE (opcional) --}}
-@section('plugins.Select2', true)
+@section('title', 'IMCUFIDE Valle de Bravo')
 
 {{-- Encabezado de contenido (aparece bajo el header) --}}
 @section('content_header')
+
 @stop
 
 {{-- Contenido principal --}}

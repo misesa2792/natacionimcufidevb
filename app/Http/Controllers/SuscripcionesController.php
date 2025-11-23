@@ -98,11 +98,6 @@ class SuscripcionesController extends Controller
 
         }
     }
-    public function success($id): View
-    {
-        $this->data['charge_id'] = $id;
-        return view($this->module.'.success',$this->data);
-    }
     public function horario(Request $request, $id): View
     {
         $suscripcion = $this->model->find($request->ids);

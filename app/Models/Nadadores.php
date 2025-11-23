@@ -68,6 +68,9 @@ class Nadadores extends Model
             ->select([
                 'idplan as id',
                 'nombre as plan',
+                'descripcion',
+                'precio',
+                'max_visitas_mes',
             ])
             ->get();
 	}
