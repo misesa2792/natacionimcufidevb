@@ -2,19 +2,6 @@
 
 @section('content')
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-      flatpickr('.date', {
-        dateFormat: 'Y-m-d',
-        maxDate: 'today',
-        locale: 'es'
-      });
-    });
-</script>
 
 <main class="row">
   <div class="col-12">

@@ -37,7 +37,15 @@ class Reserva extends Model
 				'p.nombre as plan'
 			])
 			->orderBy('r.idreserva', 'desc');
-		
+
+		if (!empty($request['name']) && trim($request['name']) !== '') {
+			$query->where('n.nombre', 'like', '%'.trim($request['name']).'%');
+		}
+
+		if (!empty($request['fi']) && trim($request['fi']) !== '' ) {
+			$query->whereDate('r.fecha', '=', $request['fi']);
+		}
+
 		$rows = $query->paginate($perPage)->appends($request);
 
         // Formatear fecha en cada resultado

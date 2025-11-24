@@ -85,14 +85,11 @@
 
 
                                 <div class="table-responsive">
-                                    <table class="table table-hover align-middle text-center">
-                                        <thead class="table-light">
+                                    <table class="table table-hover">
                                             <tr>
                                                 <th width="50">Activo</th>
                                                 <th>Horario</th>
                                             </tr>
-                                        </thead>
-                                        <tbody>
                                               @for ($h = 0; $h < 24; $h++)
                                                 @php
                                                     $hi24 = str_pad($h, 2, '0', STR_PAD_LEFT) . ':00';      // 00:00
@@ -107,7 +104,6 @@
                                                     <td class="text-left">{{ $hi12.' - '.$hf12 }}</td>
                                                 </tr>
                                             @endfor
-                                        </tbody>
                                     </table>
                                 </div>
                           

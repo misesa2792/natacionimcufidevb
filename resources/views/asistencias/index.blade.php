@@ -31,17 +31,13 @@
 
 
                         <div class="row ">
-                            <div class="col-3">
+                            <div class="col-7">
                                 <div class="ses-text-muted fw-bold">Nombre del nadador</div>
                                 <input type="text" name="name" class="form-control" placeholder="Ingresa nombre">
                             </div>
                             <div class="col-3">
                                 <div class="ses-text-muted fw-bold">Fecha Inicio</div>
-                                <input type="text" name="fi" class="form-control" placeholder="0000-00-00">
-                            </div>
-                            <div class="col-3">
-                                <div class="ses-text-muted fw-bold">Fecha Fin</div>
-                                <input type="text" name="ff" class="form-control" placeholder="0000-00-00">
+                                <input type="text" name="fi" class="form-control date" placeholder="0000-00-00">
                             </div>
                              <div class="col-auto">
                                 <div class="ses-text-muted fw-bold">Paginación</div>
