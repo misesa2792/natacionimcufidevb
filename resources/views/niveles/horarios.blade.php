@@ -47,76 +47,44 @@
     @endif
 
   
-      <div class="container mt-3">
+      <div class="row mt-3">
 
-            @for($i = 1; $i <= 7; $i++)
-          <div class="col-12">
-              <div class="sbox">
-                <div class="sbox-title ses-text-muted">
-                    <h5><i class="fa fa-table"></i> <strong> 
-                      @if($i == 1) Lunes
-                      @elseif($i == 2) Martes
-                      @elseif($i == 3) Miércoles
-                      @elseif($i == 4) Jueves
-                      @elseif($i == 5) Viernes
-                      @elseif($i == 6) Sábado
-                      @elseif($i == 7) Domingo
-                      @endif  
-                    </strong></h5>
-                </div>
-                <div class="sbox-content" style="min-height:350px;"> 
-
-                   <form action="{{ route($pageModule.'.update', ['id' => $id]) }}" method="POST">
-                        @csrf
-                      <div class="row mt-3">
-                          <input type="hidden" name="dia_semana" value="{{ $i }}" required>
-
-                          <div class="col-3">
-                              <div class="mb-3">
-                                  <label class="form-label fw-bold ses-text-muted">Hora Inicio:</label>
-                                  <input type="time" name="time_start" class="form-control" placeholder="00:00:00" required>
-                              </div>
-                          </div>
-
-                          <div class="col-3">
-                              <div class="mb-3">
-                                  <label class="form-label fw-bold ses-text-muted">Aforo Máximo:</label>
-                                  <input type="number" name="aforo_maximo"  class="form-control" placeholder="Aforo máximo" required>
-                              </div>
-                          </div>
-
-                          <div class="col-3">
-                              <div class="mb-3">
-                                  <label class="form-label fw-bold ses-text-muted">Tiempo:</label>
-                                  <select name="tiempo" class="form-control" required>
-                                    <option value="60" selected>1 Hora</option>
-                                    <option value="30">30 Minutos</option>
-                                  </select>
-                              </div>
-                          </div>
-
-                          <div class="col-3 text-center">
-                            <label class="form-label fw-bold ses-text-muted">Guardar</label>
-                            <div>
-                              <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="fa fa-save"></i></button>
-                            </div>
-                          </div>
-                        </div>
-                  </form>
-
-                  @if(isset($rowsHorario[$i]))
+        <div class="col-12">
+          <table class="table table-bordered bg-white">
+            <tr>
+              @for($i = 1; $i <= 7; $i++)
+              <th class="text-center">
+                @if($i == 1) Lunes
+                @elseif($i == 2) Martes
+                @elseif($i == 3) Miércoles
+                @elseif($i == 4) Jueves
+                @elseif($i == 5) Viernes
+                @elseif($i == 6) Sábado
+                @elseif($i == 7) Domingo
+                @endif
+              </th>
+              <th width="30">
+                <a href="{{ route($pageModule . '.asignar', ['id' => $id, 'dia' => $i]) }}"
+                    class="btn btn-xs btn-primary ses-text-white">
+                    <i class="bi bi-calendar-plus"></i>
+                </a>
+              </th>
+              @endfor
+            
+            </tr>
+            <tr>
+              @for($i = 1; $i <= 7; $i++)
+              <td colspan="2">
+                @if(isset($rowsHorario[$i]))
                     <table class="table table-bordered">
                       <tr>
-                        <th class="text-center">Hora Inicio</th>
-                        <th class="text-center">Hora Fin</th>
+                        <th class="text-center">Horario</th>
                         <th class="text-center">Aforo Máximo</th>
                       </tr>
                       @foreach ($rowsHorario[$i] as $h)
                           <tr>
-                            <td class="text-center">{{ $h['start'] }}</td>
-                            <td class="text-center">{{ $h['end'] }}</td>
-                            <td class="text-center">{{ $h['max'] }}
-                            </td>
+                            <td class="text-center">{{ $h['start'].' - '.$h['end'] }}</td>
+                            <td class="text-center">{{ $h['max'] }}</td>
                           </tr>
                       @endforeach
                     </table>
@@ -128,13 +96,11 @@
                       </h5>
                     </div>
                   @endif
-
-                </div>
-              </div>
-          </div>
-          @endfor
-
-
+              </td>
+              @endfor
+            </tr>
+          </table>
+        </div>
           
       </div>
   </div>

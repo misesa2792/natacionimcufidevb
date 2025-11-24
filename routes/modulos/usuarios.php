@@ -46,6 +46,7 @@
         Route::post('/update', 'update')->name('update');
         Route::get('/horarios/{id}', 'horarios')->name('horarios');
         Route::post('/guardar', 'guardar')->name('guardar');
+        Route::get('/asignar', 'asignar')->name('asignar');
     });
 
     Route::controller(TransaccionesController::class)->prefix('transacciones')->name('transacciones.')->group(function () {

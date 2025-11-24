@@ -52,6 +52,12 @@ class NivelesController extends Controller
         $this->data['id'] = $request->id;
         return view($this->module.'.edit',$this->data);
     }
+    public function asignar(Request $request): View
+    {
+        $this->data['id'] = $request->id;
+        $this->data['dia'] = $request->dia;
+        return view($this->module.'.asignar',$this->data);
+    }
     public function horarios($id = 0): View
     {
         $this->data['id'] = $id;
@@ -102,14 +108,17 @@ class NivelesController extends Controller
             ->with('msgstatus','success');
 
     }
-    public function update(Request $request, $id = 0)
+    public function update(Request $request)
     {
+        if(!isset($request->time_start)){
+            return back()->withErrors('Selecciona horario.');
+        }
         $minutos = (int) $request->tiempo;
+        foreach ($request->time_start as $hora => $v) {
+            $inicio = Carbon::parse($hora);
+            $fin = $inicio->copy()->addMinutes($minutos);
 
-        $inicio = Carbon::parse($request->time_start);
-        $fin = $inicio->copy()->addMinutes($minutos);
-
-        $data = [
+              $data = [
                     'idplan'        => $request->id,
                     'dia_semana'    => $request->dia_semana,
                     'aforo_maximo'  => $request->aforo_maximo,
@@ -117,8 +126,8 @@ class NivelesController extends Controller
                     'time_end'      => $fin->format('H:i:s'),
                 ];
                 
-        Planhorario::create($data);
-
+            Planhorario::create($data);
+        }
         return redirect()
             ->route($this->module.'.horarios', $request->id)
             ->with('messagetext','El plan se registró correctamente.')
