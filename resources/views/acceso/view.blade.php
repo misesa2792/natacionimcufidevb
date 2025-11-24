@@ -41,7 +41,7 @@
 
                   <div class="mb-3">
                     <div class="row">
-                      <div class="col-3 text-right ses-text-muted">Plan:</div>
+                      <div class="col-3 text-right ses-text-muted">Nivel:</div>
                       <div class="col-9 ses-text-blue">{{ $row->plan }}</div>
                     </div>
                   </div>

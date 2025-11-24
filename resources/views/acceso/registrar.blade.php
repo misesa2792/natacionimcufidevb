@@ -153,16 +153,16 @@
 
           <div class="sbox mb-3">
             <div class="sbox-title ses-text-muted">
-                <h5><i class="fa fa-table"></i> <strong> Plan Nadador</strong></h5>
+                <h5><i class="fa fa-table"></i> <strong> Nivel Nadador</strong></h5>
             </div>
             <div class="sbox-content"> 
                  
               <div class="mb-3">
-                <label class="form-label fw-bold ses-text-muted">Plan del nadador:</label>
+                <label class="form-label fw-bold ses-text-muted">Nivel del nadador:</label>
                 <select name="idplan" class="form-control js-select2" required>
-                  <option value="">--Selecciona el plan del nadador--</option>
+                  <option value="">--Selecciona el nivel del nadador--</option>
                   @foreach($rowsPlan as $v)
-                    <option value="{{ $v->id }}" @selected(old('idplan') == $v->id)>{{ $v->plan.' ['.$v->descripcion.']'.' - Total visital por plan: '.$v->max_visitas_mes.' - Precio: $'.$v->precio }}</option>
+                    <option value="{{ $v->id }}" @selected(old('idplan') == $v->id)>{{ $v->plan.' ['.$v->descripcion.']'.' - Total de visitas: '.$v->max_visitas_mes.' - Precio: $'.$v->precio }}</option>
                   @endforeach
                 </select>
               </div>

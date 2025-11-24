@@ -100,7 +100,7 @@
                 <label class="mt-3">Nadador</label>
                 <div class="m-b-md ses-text-blue">{{ $row->nombre }}</div>
 
-                <label>Plan</label>
+                <label>Nivel</label>
                 <div class="m-b-md">{{ $row->plan }}</div>
             
                 <label>Monto a pagar</label>

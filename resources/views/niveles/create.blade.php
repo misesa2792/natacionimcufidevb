@@ -29,13 +29,13 @@
         <div class="col-12">
             <div class="sbox">
                 <div class="sbox-title ses-text-muted">
-                    <h5><i class="fa fa-table"></i> <strong>Registrar nuevo plan o nivel</strong></h5>
+                    <h5><i class="fa fa-table"></i> <strong>Registrar nuevo nivel</strong></h5>
                 </div>
 
                 <div class="sbox-content">
                     <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Nombre del plan/nivel:</label>
-                        <input type="text" name="nombre" value="{{ old('nombre') }}" class="form-control" placeholder="Escribe el nombre del plan" required>
+                        <label class="form-label fw-bold ses-text-muted">Nombre del nivel:</label>
+                        <input type="text" name="nombre" value="{{ old('nombre') }}" class="form-control" placeholder="Escribe el nombre del nivel" required>
                     </div>
 
                     <div class="mb-3">
@@ -55,7 +55,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold ses-text-muted">
-                            Duración del plan (días):
+                            Duración de días:
                         </label>
                         <small class="text-muted d-block mb-1">
                             Define la vigencia en días. Máximo son 30.  

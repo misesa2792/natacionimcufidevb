@@ -71,7 +71,7 @@
                                     <th width="30">#</th>
                                     <th>Estatus</th>
                                     <th>Nadador</th>
-                                    <th>Plan/Nivel</th>
+                                    <th>Nivel</th>
                                     <th class="text-center">CURP</th>
                                     <th class="text-center">Genero</th>
                                     <th class="text-center">Edad</th>

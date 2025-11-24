@@ -3,6 +3,10 @@
 
 @section('title', 'IMCUFIDE Valle de Bravo')
 
+@section('meta_tags')
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+@stop
+
 {{-- Encabezado de contenido (aparece bajo el header) --}}
 @section('content_header')
     
@@ -40,7 +44,6 @@
 {{-- CSS extra (se inserta en <head>) --}}
 @section('css')
     {{-- Select2 via CDN si no usas el plugin de AdminLTE --}}
-
     {{-- Vite (tus estilos) --}}
     @vite(['resources/sass/app.scss', 'resources/css/sesmas.css'])
     
