@@ -96,7 +96,7 @@
                 <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">CURP:</strong>
                     <span class="c-black s-10">{{ $row->curp }}</span>
                 </div>
-                <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">Plan contrato:</strong>
+                <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">Plan contratado:</strong>
                   <span class="c-black s-10">{{ $row->plan }}</span>
                 </div>
                 <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">Tipo de pago:</strong>
@@ -124,7 +124,7 @@
         <tr>
           <th class="text-center bg-dark">#</th>
           <th class="text-center bg-dark">Estatus</th>
-          <th class="text-center bg-dark">Fechas reservada</th>
+          <th class="text-center bg-dark">Fechas reservadas</th>
           <th class="text-center bg-dark">Horarios</th>
         </tr>
         @foreach ($rows as $r)

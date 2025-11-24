@@ -66,7 +66,7 @@
                 </div>
                 <div class="sbox-content" style="min-height:350px;"> 
 
-                   <form action="{{ route($pageModule.'.update',$id) }}" method="POST">
+                   <form action="{{ route($pageModule.'.update', ['id' => $id]) }}" method="POST">
                         @csrf
                       <div class="row mt-3">
                           <input type="hidden" name="dia_semana" value="{{ $i }}" required>

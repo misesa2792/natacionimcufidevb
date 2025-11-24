@@ -110,7 +110,7 @@ class NivelesController extends Controller
         $fin = $inicio->copy()->addMinutes($minutos);
 
         $data = [
-                    'idplan'        => $id,
+                    'idplan'        => $request->id,
                     'dia_semana'    => $request->dia_semana,
                     'aforo_maximo'  => $request->aforo_maximo,
                     'time_start'    => $inicio->format('H:i:s'),
@@ -119,27 +119,10 @@ class NivelesController extends Controller
                 
         Planhorario::create($data);
 
-       /* $data = $request->validate([
-                'dia_semana' => 'required|integer|min:1|max:7',
-                'aforo_maximo'      => 'required|integer|min:1|max:100', // según tu negocio
-                'time_start' => 'required|date_format:H:i:s',
-                'tiempo'     => 'required|integer|min:30|max:300', // minutos
-            ], [
-                'dia_semana.required' => 'Selecciona un día de la semana.',
-                'dia_semana.integer'  => 'El día debe ser un número.',
-                'aforo.required'      => 'Ingresa el aforo máximo.',
-                'time_start.required' => 'Debes ingresar una hora de inicio.',
-                'time_start.date_format' => 'La hora debe tener el formato HH:MM:SS.',
-                'tiempo.required'     => 'Debes ingresar el tiempo en minutos.',
-            ]);*/
-
-         return redirect()
-            ->route($this->module.'.horarios', $id)
+        return redirect()
+            ->route($this->module.'.horarios', $request->id)
             ->with('messagetext','El plan se registró correctamente.')
             ->with('msgstatus','success');
-
-       
-   
     }
     
 }

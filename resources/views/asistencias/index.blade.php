@@ -20,7 +20,7 @@
                 </nav>
             </div>
 
-            <div class="container sbox">
+            <div class="row sbox">
                 <div class="sbox-title">
                     <h5><i class="fa fa-table"></i> <strong>{{ $pageTitle }}</strong></h5>
                     <div class="sbox-tools"></div>
@@ -31,8 +31,17 @@
 
 
                         <div class="row ">
-                            <div class="col-9">
-                             
+                            <div class="col-3">
+                                <div class="ses-text-muted fw-bold">Nombre del nadador</div>
+                                <input type="text" name="name" class="form-control" placeholder="Ingresa nombre">
+                            </div>
+                            <div class="col-3">
+                                <div class="ses-text-muted fw-bold">Fecha Inicio</div>
+                                <input type="text" name="fi" class="form-control" placeholder="0000-00-00">
+                            </div>
+                            <div class="col-3">
+                                <div class="ses-text-muted fw-bold">Fecha Fin</div>
+                                <input type="text" name="ff" class="form-control" placeholder="0000-00-00">
                             </div>
                              <div class="col-auto">
                                 <div class="ses-text-muted fw-bold">Paginación</div>
@@ -88,15 +97,21 @@
                                             @endif
                                             ">
                                             @if($v->active == 1)
-                                               <i class="bi bi-calendar-check text-primary"></i> Reservada
+                                               <i class="bi bi-calendar-check text-primary"></i> Reservado
                                             @elseif($v->active == 2)
-                                               <i class="bi bi-check-circle text-success"></i> Visitada
+                                               <i class="bi bi-check-circle text-success"></i> Visitado
                                             @elseif($v->active == 3)
                                                <i class="bi bi-x-circle text-danger"></i> No Asistio
                                             @endif
                                         </td>
-                                        
-                                        <td></td>
+                                        <td class="text-center">
+                                            @if($v->active == 1)
+                                                <a href="{{ route($pageModule . '.checkin', ['id' => $v->id, 'page' => request()->page]) }}"
+                                                    class="btn btn-xs btn-white">
+                                                    <i class="bi bi-calendar2-check"></i>
+                                                </a>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                         </table>

@@ -36,4 +36,23 @@ class AsistenciasController extends Controller
         $this->data['pagination'] = $rows;
         return view($this->module.'.index',$this->data);
     }
+    public function checkin(Request $request)
+    {
+        $this->data['id'] = $request->id;
+        return view($this->module.'.checkin',$this->data);
+    }
+    public function store(Request $request)
+    {
+        $plan = $this->model->find($request->id);
+        
+        if($plan){
+            $plan->update(['active' => $request->std]);
+        }
+
+        return redirect()
+               ->route($this->module.'.index', ['page' => $request->page])
+            ->with('messagetext','Asistencia registrada correctamente.')
+            ->with('msgstatus','success');
+
+    }
 }

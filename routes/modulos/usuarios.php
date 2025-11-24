@@ -23,7 +23,8 @@
     });
     Route::controller(AsistenciasController::class)->prefix('asistencias')->name('asistencias.')->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('/create', 'create')->name('create');
+        Route::get('/checkin', 'checkin')->name('checkin');
+        Route::post('/store', 'store')->name('store');
     });
 
     Route::controller(SuscripcionesController::class)->prefix('suscripciones')->name('suscripciones.')->group(function () {
@@ -42,6 +43,7 @@
         Route::get('/create', 'create')->name('create');
         Route::get('/edit', 'edit')->name('edit');
         Route::post('/store', 'store')->name('store');
+        Route::post('/update', 'update')->name('update');
         Route::get('/horarios/{id}', 'horarios')->name('horarios');
         Route::post('/guardar', 'guardar')->name('guardar');
     });
