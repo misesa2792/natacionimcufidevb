@@ -289,7 +289,8 @@
   --ses-border: #1f2937;
 }
 body {
-  font-family: Poppins,Roboto,Helvetica,Arial,sans-serif;
+ /* font-family: Poppins,Roboto,Helvetica,Arial,sans-serif;*/
+  font-family: Arial,sans-serif;
   font-size: var(--font-size-xs);
 }
 /*Animación como apple para iconos*/

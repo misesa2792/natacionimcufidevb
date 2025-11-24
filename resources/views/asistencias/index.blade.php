@@ -14,21 +14,16 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ URL::to('dashboard') }}"> <i class="fa fa-home"></i> </a></li>
                         <li class="breadcrumb-item">
-                            <a href="{{ route('usuarios.index') }}" class="text-decoration-none"><i>{{ $pageTitle }}</i></a>
+                            <a href="{{ route('transacciones.index') }}" class="text-decoration-none"><i>{{ $pageTitle }}</i></a>
                         </li>
                     </ol>
                 </nav>
             </div>
 
-            <div class="row sbox mt-3">
+            <div class="container sbox">
                 <div class="sbox-title">
                     <h5><i class="fa fa-table"></i> <strong>{{ $pageTitle }}</strong></h5>
-                    <div class="sbox-tools">
-                       <a href="{{ route($pageModule . '.create') }}"
-                            class="btn btn-xs btn-primary ses-text-white">
-                            <i class="fa-solid fa-circle-plus"></i> Agregar
-                        </a>
-                    </div>
+                    <div class="sbox-tools"></div>
                 </div>
                 <div class="sbox-content">
 
@@ -37,8 +32,7 @@
 
                         <div class="row ">
                             <div class="col-9">
-                                <div class="ses-text-muted fw-bold">Nombre</div>
-                                <input type="text" name="name" class="form-control" placeholder="Ingresa nombre">
+                             
                             </div>
                              <div class="col-auto">
                                 <div class="ses-text-muted fw-bold">Paginación</div>
@@ -65,47 +59,46 @@
 
 
                         @if ($pagination->count())
-                        <table class="table table-bordered table-hover bg-white">
+                        <table class="table table-hover bg-white">
                             <thead>
                                 <tr>
                                     <th width="30">#</th>
-                                    <th width="50">Estatus</th>
-                                    <th>Nivel</th>
-                                    <th>Descripción</th>
-                                    <th class="text-center">Precio</th>
-                                    <th class="text-center">Duración del plan (días)</th>
-                                    <th class="text-center">Vigencia</th>
-                                    <th class="text-center" width="50" colspan="2">Acción</th>
+                                    <th class="text-center">Nadador</th>
+                                    <th class="text-center">Plan</th>
+                                    <th class="text-center">Fecha reservada</th>
+                                    <th class="text-center">Horario reservado</th>
+                                    <th class="text-center">Estatus</th>
+                                    <th class="text-center">Accion</th>
                                 </tr>
                             </thead>
-                             @foreach ($pagination as $n)
-                                <tr>
-                                    <td class="text-center">{{ ++$j }}</td>
-                                    <td class="text-center">
-                                        @if($n->active == 1)    
-                                            <span class="badge badge-success">Activo</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $n->plan }}</td>
-                                    <td>{{ $n->descripcion }}</td>
-                                    <td class="text-center">${{ $n->precio }}</td>
-                                    <td class="text-center">{{ $n->max_visitas_mes }}</td>
-                                    <td class="text-center">Vigencia de {{ $n->duracion_dias }} días</td>
-                                    <td class="text-center">
-                                        <a href="{{ route($pageModule . '.edit', ['id' => $n->id]) }}"
-                                            class="btn btn-xs btn-white">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
+                             @foreach ($pagination as $v)
+                                    <tr>
+                                        <td class="text-center">{{ ++$j }}</td>
+                                        <td>{{ $v->nadador }}</td>
+                                        <td>{{ $v->plan }}</td>
+                                        <td class="text-center">{{ $v->fecha_formateada }}</td>
+                                        <td class="text-center">{{ $v->time_start.'-'.$v->time_end }}</td>
+                                        <td class="
+                                            @if($v->active == 1)
+                                                table-primary
+                                            @elseif($v->active == 2)
+                                                table-success
+                                            @elseif($v->active == 3)
+                                                table-danger
+                                            @endif
+                                            ">
+                                            @if($v->active == 1)
+                                               <i class="bi bi-calendar-check text-primary"></i> Reservada
+                                            @elseif($v->active == 2)
+                                               <i class="bi bi-check-circle text-success"></i> Visitada
+                                            @elseif($v->active == 3)
+                                               <i class="bi bi-x-circle text-danger"></i> No Asistio
+                                            @endif
+                                        </td>
                                         
-                                        <a href="{{ route($pageModule . '.horarios', $n->id) }}"
-                                            class="btn btn-xs btn-white">
-                                            <i class="bi bi-calendar-week"></i> Horario
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                        <td></td>
+                                    </tr>
+                                @endforeach
                         </table>
                     @else
                         {{-- Vista alternativa sin tabla cuando no hay registros --}}

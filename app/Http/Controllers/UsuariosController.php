@@ -7,7 +7,7 @@ use App\Models\User;
 
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Gate;
+
 class UsuariosController extends Controller
 {
     protected $data = [];	

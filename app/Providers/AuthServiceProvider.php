@@ -33,6 +33,7 @@ class AuthServiceProvider extends ServiceProvider
             'menu-niveles'       => [1,2],
             'menu-suscripciones' => [1,2,3],
             'menu-transacciones' => [1,2],
+            'menu-asistencias' => [1,2,3],
         ];
 
         foreach ($menus as $gateName => $nivelesPermitidos) {

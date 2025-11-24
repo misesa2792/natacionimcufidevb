@@ -361,6 +361,12 @@ return [
             'can'     => 'menu-suscripciones',
         ],
         [
+            'text'    => 'Control de Asistencia',
+            'icon'    => 'bi bi-journal-check',
+            'url' => 'asistencias',
+            'can'     => 'menu-asistencias',
+        ],
+        [
             'text'    => 'Transacciones',
             'icon'    => 'bi bi-cash-coin',
             'url' => 'transacciones',

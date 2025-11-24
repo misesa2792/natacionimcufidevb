@@ -22,7 +22,7 @@
       </nav>
     </div>
   
-    <form action="{{ route($pageModule.'.store') }}" method="POST">
+    <form action="{{ route($pageModule.'.guardar',['id' => $id]) }}" method="POST">
     @csrf
     <div class="container mt-3">
 
@@ -33,24 +33,33 @@
                 </div>
 
                 <div class="sbox-content">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold ses-text-muted">Estatus:</label>
+                        <select name="active" class="form-control" required>
+                            <option value="1" @selected($row->active == 1)>Activo</option>
+                            <option value="2" @selected($row->active == 2)>Inactivo</option>
+                        </select>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label fw-bold ses-text-muted">Nombre del plan/nivel:</label>
-                        <input type="text" name="nombre" value="{{ old('nombre') }}" class="form-control" placeholder="Escribe el nombre del plan" required>
+                        <input type="text" name="nombre" value="{{ $row->nombre }}" class="form-control" placeholder="Escribe el nombre del plan" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold ses-text-muted">Descripción:</label>
-                        <input type="text" name="descripcion" value="{{ old('descripcion') }}" class="form-control" placeholder="Ej: Niñas y niños de 5 a 10 años" required>
+                        <input type="text" name="descripcion" value="{{ $row->descripcion }}" class="form-control" placeholder="Ej: Niñas y niños de 5 a 10 años" required>
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold ses-text-muted">Precio:</label>
-                        <input type="text" name="precio" value="{{ old('precio') }}" class="form-control" placeholder="Ejemplo: 250.00" required>
+                        <input type="text" name="precio" value="{{ $row->precio }}" class="form-control" placeholder="Ejemplo: 250.00" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-bold ses-text-muted">Visitas máximas incluidas (Max. 30 visitas):</label>
-                        <input type="number" name="max_visitas_mes" value="{{ old('max_visitas_mes') }}" class="form-control" placeholder="Número de visitas permitidas" required>
+                        <input type="number" name="max_visitas_mes" value="{{ $row->max_visitas_mes }}" class="form-control" placeholder="Número de visitas permitidas" required>
                     </div>
 
                     <div class="mb-3">
@@ -61,7 +70,7 @@
                             Define la vigencia en días. Máximo son 30.  
                             Por ejemplo: si el usuario tiene 3 visitas y el plan dura 30 días, podrá programarlas dentro de esos 30 días desde su fecha de inicio.
                         </small>
-                        <input type="number" name="duracion_dias" value="30" class="form-control" placeholder="Duración en días" required>
+                        <input type="number" name="duracion_dias" value="{{ $row->duracion_dias }}" class="form-control" placeholder="Duración en días" required>
                     </div>
 
                     <div class="mt-3 text-center">

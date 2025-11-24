@@ -46,6 +46,12 @@ class NivelesController extends Controller
     {
         return view($this->module.'.create',$this->data);
     }
+    public function edit(Request $request): View
+    {
+        $this->data['row'] = $this->model->find($request->id);
+        $this->data['id'] = $request->id;
+        return view($this->module.'.edit',$this->data);
+    }
     public function horarios($id = 0): View
     {
         $this->data['id'] = $id;
@@ -62,10 +68,9 @@ class NivelesController extends Controller
             'nombre'           => 'required|string|max:255',
             'descripcion'      => 'required|string|max:255',
             'precio'           => 'required|numeric',
-            'duracion_dias'    => 'required|integer',
-            'max_visitas_mes'  => 'required|integer',
+            'duracion_dias'    => "required|integer|max:30",
+            'max_visitas_mes'  => 'required|integer|max:30',
         ]);
-
         $data['active'] = 1;
 
         $plan = Niveles::create($data);
@@ -73,6 +78,27 @@ class NivelesController extends Controller
         return redirect()
             ->route($this->module.'.index')
             ->with('messagetext','El plan se registró correctamente.')
+            ->with('msgstatus','success');
+    }
+    public function guardar(Request $request)
+    {
+        $data = $request->validate([
+            'nombre'           => 'required|string|max:255',
+            'descripcion'      => 'required|string|max:255',
+            'precio'           => 'required|numeric',
+            'duracion_dias'    => "required|integer|max:30",
+            'max_visitas_mes'  => 'required|integer|max:30',
+        ]);
+
+        $plan = Niveles::find($request->id);
+        
+        if($plan){
+            $plan->update($data);
+        }
+
+        return redirect()
+            ->route($this->module.'.index')
+            ->with('messagetext','El plan se actualizó correctamente.')
             ->with('msgstatus','success');
 
     }
