@@ -338,29 +338,37 @@ return [
         [
             'text'    => 'Usuarios',
             'icon'    => 'bi bi-people',
-            'url' => 'usuarios',
+            'url'     => 'usuarios',
+            'can'     => 'menu-usuarios',
+            'order'     => 3,
         ],
         [
             'text'    => 'Nadadores',
-            'icon'    => 'bi bi-people',
+            'icon'    => 'bi bi-droplet-half',
             'url' => 'nadadores',
+            'can'     => 'menu-nadadores',
         ],
         [
             'text'    => 'Niveles',
-            'icon'    => 'bi bi-people',
+            'icon'    => 'bi bi-card-checklist',
             'url' => 'niveles',
+            'can'     => 'menu-niveles',
         ],
         [
             'text'    => 'Suscripciones',
-            'icon'    => 'bi bi-people',
+            'icon'    => 'bi bi-credit-card-fill',
             'url' => 'suscripciones',
+            'can'     => 'menu-suscripciones',
         ],
         [
             'text'    => 'Transacciones',
-            'icon'    => 'bi bi-people',
+            'icon'    => 'bi bi-cash-coin',
             'url' => 'transacciones',
+            'can'     => 'menu-transacciones',
         ]
-],
+    ],
+    
+    
 
 
 

@@ -27,8 +27,20 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define('module-action', [ModulePolicy::class, 'canPerform']);
+        $menus = [
+            'menu-usuarios'      => [1],
+            'menu-nadadores'     => [1, 2],
+            'menu-niveles'       => [1,2],
+            'menu-suscripciones' => [1,2,3],
+            'menu-transacciones' => [1,2],
+        ];
 
-        //
+        foreach ($menus as $gateName => $nivelesPermitidos) {
+            Gate::define($gateName, function ($user) use ($nivelesPermitidos) {
+                return $user && in_array($user->idnivel, $nivelesPermitidos);
+            });
+        }
+
+        Gate::define('module-action', [ModulePolicy::class, 'canPerform']);
     }
 }
