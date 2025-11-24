@@ -66,10 +66,8 @@
                                     <th class="text-center">Fecha Transacción</th>
                                     <th class="text-center">Estatus Transacción</th>
                                     <th class="text-center">Código Transacción</th>
-                                    <th class="text-center">Nombre</th>
                                     <th class="text-left">Descripción</th>
                                     <th class="text-center">Importe</th>
-                                    <th class="text-center">Acción</th>
                                 </tr>
                             </thead>
                              @foreach ($pagination as $v)
@@ -78,14 +76,8 @@
                                         <td class="text-center">{{ $v->fecha }}</td>
                                         <td class="text-center">{{ $v->status }}</td>
                                         <td>{{ $v->provider_charge_id }}</td>
-                                        <td>{{ $v->client }}</td>
                                         <td>{{ $v->description }}</td>
-                                        <td class="text-center">{{ $v->amount }}</td>
-                                        <td class="text-center">
-                                            <a href="{{ route('pagos.pdf', $v->idpagos) }}" class="btn btn-xs btn-outline-success" target="_blank">
-                                                <i class="bi bi-cash-coin"></i> Descargar PDF
-                                            </a>
-                                        </td>
+                                        <td class="text-center">${{ $v->amount }}</td>
                                     </tr>
                                 @endforeach
                         </table>

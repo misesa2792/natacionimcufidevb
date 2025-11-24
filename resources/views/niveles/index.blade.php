@@ -71,10 +71,11 @@
                                     <th width="30">#</th>
                                     <th width="50">Estatus</th>
                                     <th>Nivel</th>
+                                    <th>Descripción</th>
                                     <th class="text-center">Precio</th>
                                     <th class="text-center">Duración del plan (días)</th>
                                     <th class="text-center">Vigencia</th>
-                                    <th class="text-center" width="50">Acción</th>
+                                    <th class="text-center" width="100" colspan="2">Acción</th>
                                 </tr>
                             </thead>
                              @foreach ($pagination as $n)
@@ -86,13 +87,14 @@
                                         @endif
                                     </td>
                                     <td>{{ $n->plan }}</td>
+                                    <td>{{ $n->descripcion }}</td>
                                     <td class="text-center">${{ $n->precio }}</td>
                                     <td class="text-center">{{ $n->max_visitas_mes }}</td>
                                     <td class="text-center">Vigencia de {{ $n->duracion_dias }} días</td>
-                                    <td>
+                                    <td class="text-center">
                                         <a href="{{ route($pageModule . '.horarios', $n->id) }}"
                                             class="btn btn-xs btn-white">
-                                            <i class="fa-solid fa-pen"></i>
+                                            <i class="bi bi-calendar-week"></i> Horario
                                         </a>
                                     </td>
                                 </tr>

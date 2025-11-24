@@ -53,7 +53,16 @@ class NadadoresController extends Controller
         $this->data['rowsPlan'] = $this->model->catalogoPlan();
         return view($this->module.'.create',$this->data);
     }
-    public function store(Request $request, $id = 0)
+    public function edit(Request $request, $id = 0): View
+    {
+        $this->data['rowsGenero'] = $this->model->catalogoGenero();
+        $this->data['rowsParentesco'] = $this->model->catalogoParentesco();
+        $this->data['rowsPlan'] = $this->model->catalogoPlan();
+        $this->data['id'] = $id;
+        $this->data['row'] = $this->model->find($id);
+        return view($this->module.'.edit',$this->data);
+    }
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'nombre'            => 'required',
@@ -87,5 +96,34 @@ class NadadoresController extends Controller
             ->route($this->module.'.index')
             ->with('messagetext','Nadador registrado exitosamente')
             ->with('msgstatus','success');
+    }
+    public function update(Request $request)
+    {
+         $validated = $request->validate([
+            'nombre'            => 'required',
+            'fecha_nacimiento'  => 'required',
+            'edad'              => 'required|integer|max:99',
+            'idgenero'          => 'required',
+            'domicilio'         => 'required',
+            'idplan'            => 'required',
+            'titular_nombre'     => 'required',
+            'titular_telefono'   => 'required',
+            'titular_email'      => 'required',
+            'titular_domicilio'  => 'required',
+            'idparentesco'       => 'required',
+        ]);
+
+        $validated['nombre'] = strtoupper($request->nombre);
+
+        $row = $this->model->find($request->id);
+        if($row){
+            $row->update($validated);
+        }
+
+        return redirect()
+            ->route($this->module.'.index')
+            ->with('messagetext','Nadador editado exitosamente')
+            ->with('msgstatus','success');
+
     }
 }

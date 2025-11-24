@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
+use App\Services\SecureTokenService;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 class SuscripcionesController extends Controller
 {
     protected $data = [];	
@@ -18,9 +21,12 @@ class SuscripcionesController extends Controller
 	public $module = 'suscripciones';
     public static int $perpage = 10;
 
-    public function __construct(Suscripciones $model)
+    protected SecureTokenService $secureToken;
+
+    public function __construct(Suscripciones $model, SecureTokenService $secureToken)
     {
         $this->model = $model;
+        $this->secureToken = $secureToken;
 
         $this->data = ['pageTitle'	=> 	"Suscripciones",
                         'pageNote'	    =>  "Lista de suscripciones",
@@ -89,17 +95,13 @@ class SuscripcionesController extends Controller
         if($row){
             $this->data['id'] = $id;
             $this->data['row'] = $row;
-            $this->data['merchantId'] = config('openpay.merchant_id');
-            $this->data['publicKey'] = config('openpay.public_key');
-            $this->data['production'] = config('openpay.production');
-            $this->data['rowsPlanes'] = $this->model->dataPlanes();
-
-             return view('openpay.checkout', $this->data); 
+            return view($this->module.'.create',$this->data);
 
         }
     }
     public function horario(Request $request, $id): View
     {
+                                                
         $suscripcion = $this->model->find($request->ids);
         // Rango de fechas
         $period = CarbonPeriod::create($suscripcion->fecha_inicio, $suscripcion->fecha_fin);
@@ -130,6 +132,28 @@ class SuscripcionesController extends Controller
         return view($this->module.'.horarios',$this->data);
     }
 
+    public function link(Request $request): View
+    {
+        $this->data['id'] = $request->id;
+        $this->data['link_horario'] = config('app.url')."/acceso/horario?token=".$this->secureToken->encode([ 'ids' => $request->ids, 'time' => time() ]);
+        return view($this->module.'.link',$this->data);
+    }
+    public function pdf(Request $request)
+    {
+        $this->data['j'] = 1;
+        $this->data['id'] = $request->ids;
+        $this->data['folio'] = 'VB'.$this->ceros_left($request->ids,11);
+        $this->data['row'] = $this->model->suscripcionDataID($request->ids);
+        $this->data['rows'] = $this->model->listHorarioSuscripcion($request->ids);
+        $pdf = Pdf::loadView($this->module.'.pdf', $this->data)
+                ->setPaper('letter', 'portrait');;
+        // Descargar el PDF
+        return $pdf->stream($this->module.'.pdf');
+    }
+    function ceros_left($numero, $longitud) {
+        return str_pad($numero, $longitud, '0', STR_PAD_LEFT);
+    }
+
     private function dataHorarioPlan($idplan, $dias_semana, $fecha){
         $data = [];
         foreach ($this->model->listHorarioPlan($idplan, $dias_semana) as $v) {
@@ -152,21 +176,18 @@ class SuscripcionesController extends Controller
         $suscripcion = $this->model->find($request->ids);
 
         if (empty($request->idplan_horario)) {
-            return back()->withErrors(
-                'No seleccionaste ningún horario. Selecciona en total ' . $suscripcion->max_visitas_mes . ' horarios para completar tu registro.'
-            );
+            return back()
+                    ->withErrors('No seleccionaste ningún horario. Selecciona en total ' . $suscripcion->max_visitas_mes . ' horarios para completar tu registro.');
         }
 
         $total = count($request->idplan_horario);
 
         if ($total > $suscripcion->max_visitas_mes) {
-           return back()->withErrors(
-                'Has superado el número de visitas permitido por tu plan. Selecciona en total '. $suscripcion->max_visitas_mes . ' horarios para completar tu registro.'
-            );
+           return back()
+                    ->withErrors('Has superado el número de visitas permitido por tu plan. Selecciona en total '. $suscripcion->max_visitas_mes . ' horarios para completar tu registro.');
         }else if($total < $suscripcion->max_visitas_mes){
-            return back()->withErrors([
-                "Seleccionaste {$total} horarios, pero tu plan solo permite {$suscripcion->max_visitas_mes} visitas."
-            ]);
+            return back()
+                    ->withErrors(["Seleccionaste {$total} horarios, pero tu plan solo permite {$suscripcion->max_visitas_mes} visitas."]);
         }
 
         $fechas = collect($request->idplan_horario)->map(function ($json) {
@@ -192,6 +213,34 @@ class SuscripcionesController extends Controller
         return redirect()
             ->route($this->module.'.view', $id)
             ->with('messagetext','Información guardada correctamente')
+            ->with('msgstatus','success');
+    }
+    public function store(Request $request)
+    {
+        $row = Suscripciones::nadadorID($request->id);
+        if (!$row) {
+            return back()->withErrors('ID de nadador no encontrado!');
+        }
+
+        //Se crea la suscripción 
+        $base = now();      // ya con timezone corregido
+        $fecha_inicio = $base->toDateString();
+        $fecha_fin    = $base->copy()->addDays($row->duracion_dias)->toDateString();
+
+        $rowSuscripcion = $this->model->create([
+                        'idnadador'              => $request->id,
+                        'idplan'                 => $row->idplan,
+                        'fecha_inicio'           => $fecha_inicio,
+                        'fecha_fin'              => $fecha_fin,
+                        'active'                 => 1,
+                        'idtipo_pago'            => $request->idtipo_pago,
+                        'monto'                  => $row->precio,
+                        'max_visitas_mes'        => $row->max_visitas_mes
+                    ]);
+
+        return redirect()
+            ->route($this->module.'.view', $request->id)
+            ->with('messagetext','Suscripción asignada correctamente')
             ->with('msgstatus','success');
     }
 }

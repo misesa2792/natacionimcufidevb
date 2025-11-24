@@ -70,7 +70,7 @@ class AccesoController extends Controller
         if($existe){
              return back()
                         ->withErrors("El nadador con la CURP {$validated['curp']} ya se encuentra registrado en el sistema.")
-                        ->withInput();;
+                        ->withInput();
         }
 
         Nadadores::create($validated);
@@ -131,8 +131,6 @@ class AccesoController extends Controller
             $this->data['merchantId'] = config('openpay.merchant_id');
             $this->data['publicKey'] = config('openpay.public_key');
             $this->data['production'] = config('openpay.production');
-            $this->data['rowsPlanes'] = $this->model->dataPlanes();
-
             return view('openpay.checkout', $this->data); 
         }
     }

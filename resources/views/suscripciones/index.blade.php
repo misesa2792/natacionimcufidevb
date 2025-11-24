@@ -33,9 +33,9 @@
 
 
                         <div class="row ">
-                            <div class="col-9">
+                            <div class="col-10">
                                 <div class="ses-text-muted fw-bold">Nombre</div>
-                                <input type="text" name="name" class="form-control" placeholder="Ingresa nombre">
+                                <input type="text" name="nombre" class="form-control" placeholder="Ingresa nombre">
                             </div>
                              <div class="col-auto">
                                 <div class="ses-text-muted fw-bold">Paginación</div>
@@ -105,7 +105,7 @@
                                             <td class="text-center">
                                                 <a href="{{ route($pageModule . '.view', $v['id']) }}"
                                                     class="btn btn-xs btn-white">
-                                                    <i class="fa-solid fa-pen"></i>
+                                                    Abrir <i class="bi bi-arrow-right"></i>
                                                 </a>
                                             </td>
                                         @else
@@ -119,7 +119,7 @@
                                             <td class="text-center">
                                                 <a href="{{ route($pageModule . '.view', $v['id']) }}"
                                                     class="btn btn-xs btn-white">
-                                                    <i class="fa-solid fa-pen"></i>
+                                                    Abrir <i class="bi bi-arrow-right"></i>
                                                 </a>
                                             </td>
                                         @endif

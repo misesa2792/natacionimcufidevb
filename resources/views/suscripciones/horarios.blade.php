@@ -73,11 +73,9 @@
                   <div class="sbox-title ses-text-muted">
                       <h5> <i class="bi bi-calendar-week"></i> <strong> {{ $h['fecha'] }} </strong> - {{ $h['dia_nombre'] }}</h5>
                   </div>
-                  <div class="sbox-content" style="min-height:auto;"> 
+                  <div class="sbox-content"> 
 
                    @foreach($h['rows_horario'] as $v)
-                      <div class="row">
-                        <div class="col-12">
 
                           @php
                               $ocupados    = $v['ocupados'];
@@ -116,16 +114,8 @@
                               <div class="horario-content">
                                   <div class="d-flex justify-content-between">
                                       <div>
-                                          <div class="fw-semibold ses-fs-xs text-slot">
-                                              {{ $v['time_start'] }} - {{ $v['time_end'] }}
-                                          </div>
-                                          <div class="ses-fs-xs text-status mt-1">
-                                              <i class="bi {{ $estadoIcon }} me-1"></i>
-                                              @if($disponibles > 0)
-                                                  {{ $estadoTexto }}: {{ $disponibles }}
-                                              @else
-                                                  {{ $estadoTexto }}
-                                              @endif
+                                          <div class="ses-fs-xs">
+                                              <small>{{ $v['time_start'] }} - {{ $v['time_end'] }}</small>
                                           </div>
                                       </div>
 
@@ -138,8 +128,6 @@
                               </div>
                           </label>
 
-                        </div>
-                      </div>
                   @endforeach
 
                   </div>
@@ -149,7 +137,7 @@
 
 
           <div class="mt-3 text-center">
-                <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="fa fa-save"></i> Guardar - Asignar horario al nadador</button>
+                <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="bi bi-calendar-plus me-2"></i> Asignar horario al nadador</button>
           </div>
 
         </div>
@@ -161,7 +149,24 @@
 
   </div>
 </main>
+<script>
+    function copiarLink() {
+        const input = document.getElementById('linkHorario');
+        input.select();
+        input.setSelectionRange(0, 99999); // iOS fix
 
+        document.execCommand('copy'); // MÉTODO COMPATIBLE
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Link copiado',
+            text: 'Ahora puedes pegarlo en WhatsApp.',
+            timer: 1800,
+            showConfirmButton: false,
+            position: 'top-end'
+        });
+    }
+</script>
 <style>
   .horario-pill {
     display: inline-block;
@@ -174,7 +179,7 @@
     border: 1px solid #e5e7eb;
     border-left-width: 4px;
     border-radius: 12px;
-    padding: 10px 12px;
+    padding: 5px 6px;
     background: #ffffff;
     transition: all .18s ease;
     box-shadow: 0 1px 2px rgba(0,0,0,.05);
@@ -249,7 +254,7 @@
 /* Badge cupo */
 .ses-slot-badge {
     padding: 4px 10px;
-    font-size: 0.75rem;
+    font-size: 0.55rem;
     border-radius: 999px;
     font-weight: 600;
 }
@@ -285,5 +290,6 @@
 }
 
 </style>
+
 
 @stop

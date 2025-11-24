@@ -30,6 +30,7 @@ class Niveles extends Model
                 'n.idplan as id',
                 'n.active',
                 'n.nombre as plan',
+                'descripcion',
                 'precio',
                 'duracion_dias',
                 'max_visitas_mes'

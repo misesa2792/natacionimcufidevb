@@ -2,7 +2,19 @@
 
 @section('content')
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      flatpickr('.date', {
+        dateFormat: 'Y-m-d',
+        maxDate: 'today',
+        locale: 'es'
+      });
+    });
+</script>
 
 <main class="row">
   <div class="col-12">
@@ -22,66 +34,145 @@
       </nav>
     </div>
   
-    <form action="{{ route($pageModule.'.update',$id) }}" method="POST">
+    <form action="{{ route($pageModule.'.update', ['id' => $id]) }}" method="POST">
        @csrf
-    <div class="row mt-3">
+   
+        <div class="container mt-3">
+            <div class="col-12">
+                <div class="sbox">
+                  <div class="sbox-title ses-text-muted">
+                      <h5><i class="fa fa-table"></i> <strong> Agregar nuevo Nadador</strong></h5>
+                  </div>
+                  <div class="sbox-content"> 
 
-        <div class="col-6">
-            <div class="sbox">
-              <div class="sbox-title ses-text-muted">
-                  <h5><i class="fa fa-table"></i> <strong> Editar usuario</strong></h5>
-              </div>
-              <div class="sbox-content"> 
+                      <div class="mb-3">
+                        <label class="form-label fw-bold ses-text-muted">Nombre del Nadador:</label>
+                        <input type="text" name="nombre" value="{{ $row['nombre'] }}" class="form-control" placeholder="Ingresa nombre completo" required>
+                      </div>
+                      
+                      <div class="row">
+                        <div class="col-8">
+                          <div class="mb-3">
+                            <label class="form-label fw-bold ses-text-muted">CURP:</label>
+                            <input type="text" name="curp" value="{{ $row['curp'] }}" class="form-control" placeholder="Ingresa CURP - 18 dígitos" disabled required>
+                          </div>
+                        </div>
+                        
+                        <div class="col-4">
+                          <div class="mb-3">
+                            <label class="form-label fw-bold ses-text-muted">Fecha de nacimiento:</label>
+                            <input type="text" name="fecha_nacimiento" value="{{ $row['fecha_nacimiento'] }}" class="form-control date" placeholder="0000-00-00" required>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-6">
+                          <div class="mb-3">
+                            <label class="form-label fw-bold ses-text-muted">Edad del Nadador:</label>
+                            <input type="number" name="edad" value="{{ $row['edad'] }}" class="form-control" placeholder="Ingresa edad" required>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="mb-3">
+                            <label class="form-label fw-bold ses-text-muted">Género del Nadador:</label>
+                            <select name="idgenero" class="form-control js-select2" required>
+                              <option value="">--Select Please--</option>
+                              @foreach($rowsGenero as $v)
+                                <option value="{{ $v->id }}" @selected($row['idgenero'] == $v->id)>{{ $v->genero }}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mb-3">
+                        <label class="form-label fw-bold ses-text-muted">Domicilio (calle, número y colonia o datos de referencia):</label>
+                        <input type="text" name="domicilio" value="{{ $row['domicilio'] }}" class="form-control" placeholder="Ingresa domicilio" required>
+                      </div>
+
+                  </div>
+                </div>
+
+              <div class="sbox">
+                <div class="sbox-title ses-text-muted">
+                    <h5><i class="fa fa-table"></i> <strong> Datos titular responsable del nadador</strong></h5>
+                </div>
+                <div class="sbox-content"> 
                     <div class="mb-3">
                       <label class="form-label fw-bold ses-text-muted">Nombre completo:</label>
-                      <input type="text" name="name" value="{{ $row['name'] }}" class="form-control" placeholder="Ingresa nombre completo" required>
+                      <input type="text" name="titular_nombre" value="{{ $row['titular_nombre'] }}" class="form-control" placeholder="Ingresa nombre completo" required>
                     </div>
 
                     <div class="mb-3">
                       <label class="form-label fw-bold ses-text-muted">Teléfono:</label>
-                      <input type="number" name="phone" value="{{ $row['phone'] }}" class="form-control" placeholder="Ingresa teléfono" required>
+                      <input type="text" name="titular_telefono" value="{{ $row['titular_telefono'] }}" class="form-control" placeholder="Ingresa teléfono" required>
                     </div>
 
                     <div class="mb-3">
-                      <label class="form-label fw-bold ses-text-muted">CURP:</label>
-                      <input type="text" name="curp" value="{{ $row['curp'] }}" class="form-control" placeholder="Ingresa CURP - 18 dígitos" required>
+                      <label class="form-label fw-bold ses-text-muted">Correo Electrónico:</label>
+                      <input type="text" name="titular_email" value="{{ $row['titular_email'] }}" class="form-control" placeholder="Ingresa correo electrónico" required>
                     </div>
 
-                    <div class="mt-3 text-center">
-                      <button type="button"
-                          onclick="location.href='{{ route($pageModule.'.index') }}'" class="btn btn-sm btn-white">
-                          <i class="fa fa-arrow-circle-left"></i> Cancelar
-                        </button>
-                      <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="fa fa-save"></i> Guardar</button>
+                    <div class="mb-3">
+                      <label class="form-label fw-bold ses-text-muted">Domicilio:</label>
+                      <input type="text" name="titular_domicilio" value="{{ $row['titular_domicilio'] }}" class="form-control" placeholder="Ingresa domicilio" required>
                     </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-bold ses-text-muted">Parentesco:</label>
+                      <select name="idparentesco" class="form-control js-select2" required>
+                        <option value="">--Selecciona el parentesco--</option>
+                        @foreach($rowsParentesco as $v)
+                          <option value="{{ $v->id }}" @selected($row['idparentesco'] == $v->id)>{{ $v->parentesco }}</option>
+                        @endforeach
+                      </select>
+                    </div>
+
+                </div>
               </div>
-            </div>
-          </div>
 
-        <div class="col-6">
-          <div class="sbox">
-            <div class="sbox-title ses-text-muted">
-                <h5><i class="fa fa-table"></i> <strong> Credenciales de Acceso</strong></h5>
-            </div>
-            <div class="sbox-content"> 
+              <div class="sbox mb-3">
+                <div class="sbox-title ses-text-muted">
+                    <h5><i class="fa fa-table"></i> <strong> Plan Nadador</strong></h5>
+                </div>
+                <div class="sbox-content"> 
+                    
                   <div class="mb-3">
-                    <label class="form-label fw-bold ses-text-muted">Correo electrónico:</label>
-                    <input type="email" name="email" value="{{ $row['email'] }}" class="form-control" placeholder="Ingresa email" required>
+                    <label class="form-label fw-bold ses-text-muted">Plan del nadador:</label>
+                    <select name="idplan" class="form-control js-select2" required>
+                      <option value="">--Selecciona el plan del nadador--</option>
+                      @foreach($rowsPlan as $v)
+                        <option value="{{ $v->id }}" @selected($row['idplan'] == $v->id)>{{ $v->plan.' ['.$v->descripcion.']'.' - Total visital por plan: '.$v->max_visitas_mes.' - Precio: $'.$v->precio }}</option>
+                      @endforeach
+                    </select>
                   </div>
 
-                  <div class="mb-1">
-                    <label class="form-label fw-bold ses-text-muted">Contraseña:</label>
-                    <div class="ses-text-danger"><small>Deja en blanco si no quieres cambiar tu contraseña actual</small> </div>
-                    <input type="password" name="password" value="" class="form-control" placeholder="****">
+                  <div class="mt-3 text-center">
+                    <button type="button"
+                        onclick="location.href='{{ route($pageModule.'.index') }}'" class="btn btn-sm btn-white">
+                        <i class="fa fa-arrow-circle-left"></i> Cancelar
+                      </button>
+                    <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="fa fa-save"></i> Guardar</button>
                   </div>
+                  
+                </div>
+              </div>
+
             </div>
-          </div>
         </div>
-    </div>
-        </form>
+        
+    </form>
   </div>
        
 
 </main>
-
+@section('plugins.Select2', true)
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.jQuery && $.fn.select2) {
+        $('.js-select2').select2();
+      }
+    });
+</script>
 @stop

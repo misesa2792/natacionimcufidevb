@@ -17,15 +17,14 @@ class Transacciones extends Model
 
 		$query = DB::table('ses_payments as p')
 			->leftJoin('users as u', 'u.id', '=', 'p.iduser')
-			->leftJoin('sl_pagos as pa', 'pa.idpagos', '=', 'p.idpagos')
+			->leftJoin('ses_suscripcion as s', 's.idsuscripcion', '=', 'p.idsuscripcion')
 			->select([
 				'p.idpayments as id',
-				'p.idpagos',
+				'p.idsuscripcion',
 				'p.provider_charge_id',
 				'p.status',
 				'p.amount',
 				'p.currency',
-				'p.client',
 				'p.description',
 				'p.created_at as fecha',
 			])

@@ -91,10 +91,16 @@
                                         <td>{{ $n->nadador }}</td>
                                         <td>{{ $n->plan }}</td>
                                         <td class="text-center">{{ $n->curp }}</td>
-                                        <td>{{ $n->genero }}</td>
+                                        <td class="text-center">{{ $n->genero }}</td>
                                         <td class="text-center">{{ $n->edad }}</td>
                                         <td class="text-center">{{ $n->fecha_nacimiento }}</td>
                                         <td>{{ $n->domicilio }}</td>
+                                        <td class="text-center">
+                                            <a href="{{ route($pageModule . '.edit', $n->id) }}"
+                                                class="btn btn-xs btn-white">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 @endforeach
                         </table>

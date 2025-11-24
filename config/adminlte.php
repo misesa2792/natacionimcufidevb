@@ -356,16 +356,10 @@ return [
             'url' => 'suscripciones',
         ],
         [
-            'text'    => 'Pagos',
-            'icon'    => 'bi bi-cash-coin',
-            'url' => 'pagos',
-        ],
-       
-        [
             'text'    => 'Transacciones',
-            'icon'    => 'bi bi-cash-coin',
+            'icon'    => 'bi bi-people',
             'url' => 'transacciones',
-        ],
+        ]
 ],
 
 

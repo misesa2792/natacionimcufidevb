@@ -24,7 +24,7 @@ class OpenpayPaymentController extends Controller
     }
 
     // Muestra el formulario
-    public function showCheckout(Request $request)
+    /*public function showCheckout(Request $request)
     {
         return view('openpay.checkout', [
             'id'         => $request->id, // idpagos
@@ -34,7 +34,7 @@ class OpenpayPaymentController extends Controller
             'production' => config('openpay.production'),
         ]);
     }
-
+    */
     // Recibe el token y hace el cargo
     public function charge(Request $request)
     {
@@ -128,11 +128,9 @@ class OpenpayPaymentController extends Controller
                     ]);
                 DB::commit();
 
-               $sesToken = $this->secureToken->encode([
-                                                    'ids' => $idSuscripcion,
-                                                    'idp' => $rowPayment->idpayments,
-                                                    'key' => $charge->id,
-                                                ]);
+               $sesToken = $this->secureToken->encode([ 'ids' => $idSuscripcion ]);
+                                                  //'idp' => $rowPayment->idpayments,
+                                                    //'key' => $charge->id,
 
                 return redirect()->route('acceso.success', ['id' => $charge->id, 'token' => $sesToken]);
         } catch (\Exception $e) {

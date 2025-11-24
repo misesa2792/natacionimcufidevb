@@ -2,7 +2,7 @@
     use App\Http\Controllers\OpenpayPaymentController;
     use App\Http\Controllers\AccesoController;
 
-    Route::get('/openpay/checkout', [OpenpayPaymentController::class, 'showCheckout'])->name('openpay.checkout');
+    //Route::get('/openpay/checkout', [OpenpayPaymentController::class, 'showCheckout'])->name('openpay.checkout');
     Route::post('/openpay/pay', [OpenpayPaymentController::class, 'charge'])->name('openpay.charge');
 
 

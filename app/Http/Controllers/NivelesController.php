@@ -60,6 +60,7 @@ class NivelesController extends Controller
     {
         $data = $request->validate([
             'nombre'           => 'required|string|max:255',
+            'descripcion'      => 'required|string|max:255',
             'precio'           => 'required|numeric',
             'duracion_dias'    => 'required|integer',
             'max_visitas_mes'  => 'required|integer',

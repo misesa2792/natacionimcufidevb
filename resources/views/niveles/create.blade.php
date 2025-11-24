@@ -37,6 +37,11 @@
                         <label class="form-label fw-bold ses-text-muted">Nombre del plan/nivel:</label>
                         <input type="text" name="nombre" value="{{ old('nombre') }}" class="form-control" placeholder="Escribe el nombre del plan" required>
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold ses-text-muted">Descripción:</label>
+                        <input type="text" name="descripcion" value="{{ old('descripcion') }}" class="form-control" placeholder="Ej: Niñas y niños de 5 a 10 años" required>
+                    </div>
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold ses-text-muted">Precio:</label>

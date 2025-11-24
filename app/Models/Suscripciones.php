@@ -39,11 +39,10 @@ class Suscripciones extends Model
 			])
 			->orderBy('n.nombre', 'asc');
 		// Filtros opcionales (ejemplo)
-		/*
+		
 		if (!empty($request['nombre']) && trim($request['nombre']) !== '') {
-			$query->where('f.descripcion', 'like', '%'.trim($request['nombre']).'%');
+			$query->where('n.nombre', 'like', '%'.trim($request['nombre']).'%');
 		}
-		*/
 		return $query->paginate($perPage)->appends($request);
 	}
 	public static function suscripcionID($id)
@@ -155,7 +154,7 @@ class Suscripciones extends Model
 				->where('n.curp', $curp)
 				->first();
 	}
-	public static function dataPlanes()
+	/*public static function dataPlanes()
 	{
 		return DB::table('ses_plan')
 			->select([
@@ -164,7 +163,7 @@ class Suscripciones extends Model
 				'precio'
 			])
 			->get();
-	}
+	}*/
 	public static function totalReservasPorFecha($id, $fecha)
 	{
 		return DB::table('ses_reserva')
@@ -213,6 +212,57 @@ class Suscripciones extends Model
 			$row->fecha_formateada = Carbon::parse($row->fecha)->isoFormat('DD [de] MMMM [de] YYYY'); // Ej: 11 de diciembre de 2025
 			return $row;
 		});
+	}
+
+	public static function listHorarioSuscripcion($id)
+	{
+        $rows = DB::table('ses_suscripcion as s')
+				->join('ses_reserva as r', 'r.idsuscripcion', '=', 's.idsuscripcion')
+				->join('ses_plan_horario as ph', 'ph.idplan_horario', '=', 'r.idplan_horario')
+				->where('s.idsuscripcion', $id)
+				->orderBy('r.fecha', 'asc')
+				->select([
+					'r.fecha',
+					DB::raw('DATE_FORMAT(ph.time_start, "%h:%i %p") as time_start'),
+					DB::raw('DATE_FORMAT(ph.time_end, "%h:%i %p") as time_end'),
+				])
+				->get();
+		return $rows->map(function ($row) {
+			$row->fecha_formateada = Carbon::parse($row->fecha)->isoFormat('DD [de] MMMM [de] YYYY'); // Ej: 11 de diciembre de 2025
+			return $row;
+		});
+	}
+	public static function suscripcionDataID($id)
+	{
+		$row = DB::table('ses_suscripcion as s')
+			->join('ses_nadador as n', 'n.idnadador', '=', 's.idnadador')
+			->join('ses_plan as p', 'p.idplan', '=', 's.idplan')
+			->join('ses_tipo_pago as tp', 'tp.idtipo_pago', '=', 's.idtipo_pago')
+			->select([
+				's.idsuscripcion as id',
+				'n.nombre',
+				'n.curp',
+				's.fecha_inicio as fi',
+				's.fecha_fin as ff',
+				's.monto',
+				'p.nombre as plan',
+				'tp.descripcion as pago',
+				's.max_visitas_mes',
+				DB::raw("
+					CASE 
+						WHEN CURDATE() BETWEEN s.fecha_inicio AND s.fecha_fin 
+							THEN 'ACTIVA'
+						ELSE 'VENCIDA'
+					END AS estado
+				"),
+			])
+			->where('s.idsuscripcion', $id)
+			->first();
+		if ($row) {
+			$row->fi_formateada = Carbon::parse($row->fi)->isoFormat('DD [de] MMMM [de] YYYY');
+			$row->ff_formateada = Carbon::parse($row->ff)->isoFormat('DD [de] MMMM [de] YYYY');
+		}
+		return $row;
 	}
     
 }

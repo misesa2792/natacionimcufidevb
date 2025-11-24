@@ -36,18 +36,6 @@
     <div class="row mt-3">
       <div class="row">
         <div class="col-6">
-
-            <div class="sbox">
-              <div class="sbox-title ses-text-muted">
-                  <h5><i class="fa fa-table"></i> <strong> Plan del Nadador</strong></h5>
-              </div>
-              <div class="sbox-content"> 
-
-                <h4 class="text-center text-primary">{{ $row->plan }}</h4>
-                  
-              </div>
-            </div>
-
             <div class="sbox">
               <div class="sbox-title ses-text-muted">
                   <h5><i class="fa fa-table"></i> <strong> Datos Nadador</strong></h5>
@@ -86,8 +74,17 @@
                     </div>
                   </div>
 
+                  <div class="mb-3">
+                    <div class="row">
+                      <div class="col-3 text-right ses-text-muted">Plan del nadador:</div>
+                      <div class="col-9 ses-text-blue">{{ $row->plan }}</div>
+                    </div>
+                  </div>
+
               </div>
             </div>
+        </div>
+        <div class="col-6">
 
             <div class="sbox">
               <div class="sbox-title ses-text-muted">
@@ -125,7 +122,7 @@
           
           </div>
 
-        <div class="col-6">
+        <div class="col-12">
           
           <div class="sbox">
             <div class="sbox-title ses-text-muted">
@@ -142,6 +139,7 @@
                       <th class="text-center">Fecha Fin</th>
                       <th class="text-center">Total de visitas permitidas por plan</th>
                       <th class="text-center" width="30%">Horario Asignado</th>
+                      <th></th>
                     </tr>
                     @foreach($rowsSuscripciones as $v)
                       <tr>
@@ -175,21 +173,39 @@
                                     </tr>
                                   @endforeach
                                 </table>
+
+                                
                               @else 
 
                                 @if($v['estado'] == 'ACTIVA')
                                   <div class="row">
                                     <div class="col-12 text-center">
-                                      <a href="{{ route($pageModule . '.horario', ['id' => $id, 'ids' => $v['id']]) }}"
-                                        class="btn btn-outline-primary btn-xs px-4"
-                                        style="border-width:2px;">
-                                          <i class="bi bi-calendar-x"></i> Asignar Horario
-                                      </a>
+                                        <a href="{{ route($pageModule . '.link', ['id' => $id, 'ids' => $v['id']]) }}" 
+                                          class="btn btn-outline-secondary btn-sm">
+                                            <i class="bi bi-link-45deg"></i>
+                                            Generar enlace para usuario
+                                        </a>
+
+                                        <a href="{{ route($pageModule . '.horario', ['id' => $id, 'ids' => $v['id']]) }}" 
+                                          class="btn btn-primary btn-sm text-white">
+                                            <i class="bi bi-clock"></i>
+                                            Asignar horario
+                                        </a>
+
+                                        
                                     </div>
                                   </div>
                                 @endif
-
+                                
                               @endif
+                        </td>
+                        <td class="text-center">
+                          @if($v['rows_fechas']->isNotEmpty())
+                            <a href="{{ route($pageModule . '.pdf', ['ids' => $v['id']]) }}" 
+                              class="btn btn-outline-danger btn-sm" target="_blank">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </a>
+                          @endif
                         </td>
                       </tr>
                     @endforeach
