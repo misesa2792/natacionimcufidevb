@@ -51,7 +51,7 @@ class Suscripciones extends Model
 				'de.descripcion as desc_descuento',
 				'de.descuento',
 			])
-			->orderBy('n.nombre', 'asc');
+			->orderBy('n.idnadador', 'asc');
 		// Filtros opcionales (ejemplo)
 		
 		if (!empty($request['nombre']) && trim($request['nombre']) !== '') {
