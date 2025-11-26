@@ -55,6 +55,7 @@ class NadadoresController extends Controller
         $this->data['rowsGenero'] = $this->model->catalogoGenero();
         $this->data['rowsParentesco'] = $this->model->catalogoParentesco();
         $this->data['rowsPlan'] = $this->model->catalogoPlan();
+        $this->data['rowsDescuentos'] = $this->model->catalogoDescuentos();
         return view($this->module.'.create',$this->data);
     }
     public function edit(Request $request): View
@@ -65,13 +66,16 @@ class NadadoresController extends Controller
         $this->data['rowsPlan'] = $this->model->catalogoPlan();
         $this->data['id'] = $request->id;
         $this->data['row'] = $row;
+        $this->data['rowsDescuentos'] = $this->model->catalogoDescuentos();
         $nivel = "";
         if($row->idniveles != 0){
             $nivel = Nivel::find($row->idniveles);
             $this->data['nivel'] = $nivel->descripcion;
+          //  $this->data['rowsPlan'] = $this->model->catalogoPlanNivel($row->idniveles);
         }else{
             $this->data['nivel'] = '';
         }
+            $this->data['rowsPlan'] = $this->model->catalogoPlan();
         return view($this->module.'.edit',$this->data);
     }
     public function store(Request $request)
@@ -96,6 +100,11 @@ class NadadoresController extends Controller
         $validated['curp'] = strtoupper($request->curp);
         $validated['comentarios'] = $request->comentarios;
         $validated['titular_domicilio'] = '.';
+        $validated['iddescuento'] = $request->iddescuento;
+
+        $plan = Niveles::find($validated['idplan']);
+        $validated['idniveles'] = $plan['idniveles'];
+
         $existe = $this->model->where('curp', $validated['curp'])->exists();
         if($existe){
              return back()
@@ -136,6 +145,7 @@ class NadadoresController extends Controller
         $validated['comentarios'] = $request->comentarios;
         $validated['telefono_emergencia'] = $request->telefono_emergencia;
         $validated['curp'] = strtoupper($request->curp);
+        $validated['iddescuento'] = $request->iddescuento;
 
         $plan = Niveles::find($validated['idplan']);
         $validated['idniveles'] = $plan['idniveles'];

@@ -174,13 +174,47 @@
                       @endforeach
                     </select>
                   </div>
-
-                  <div class="mt-3 text-center">
-                    <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="fa fa-save"></i> Guardar</button>
-                  </div>
                   
                 </div>
               </div>
+
+               <div class="sbox mb-3">
+                <div class="sbox-title ses-text-muted">
+                    <h5><i class="fa fa-table"></i> <strong> Descuento Alumno</strong></h5>
+                </div>
+                <div class="sbox-content"> 
+                    
+                  <div class="mb-3">
+                    <label class="form-label fw-bold ses-text-danger">NOTA IMPORTANTE:</label>
+                    <p>
+                        Si el alumno cuenta con algún descuento, selecciónalo en este apartado.  
+                        Esta configuración es fundamental para que la <strong>pasarela de pago</strong> utilizada desde la aplicación móvil calcule correctamente el importe a pagar.
+                        <br><br>
+                        En el sistema web, dentro del módulo de pagos, será posible aplicar o ajustar un descuento diferente si así se requiere; sin embargo, es importante mantener esta información correctamente registrada desde el inicio para evitar inconsistencias en los cobros.
+                    </p>
+                </div>
+
+
+                  <div class="mb-3">
+                    <label class="form-label fw-bold ses-text-muted">Nivel con plan del alumno:</label>
+                    <select name="iddescuento" class="form-control js-select2" required>
+                      <option value="1">--Selecciona descuento--</option>
+                      @foreach($rowsDescuentos as $v)
+                        <option value="{{ $v->id }}" @selected($row['iddescuento'] == $v->id)>{{ $v->descripcion.' ('.$v->descuento.'%) ' }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+
+                  <div class="row mt-4 text-center">
+                    <div class="col-12">
+                      <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="fa fa-save"></i> Guardar</button>
+                    </div>
+                  </div>
+                  
+                </div>
+            </div>
+
+
             </div>
 
         </div>

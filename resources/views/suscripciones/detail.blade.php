@@ -135,8 +135,19 @@
                   @foreach($rowsFechas as $key => $v)
                     <div class="mb-3">
                       <div class="row">
-                        <div class="col-3 text-right ses-text-muted">Fecha reservada #{{ $key++ }}:</div>
-                        <div class="col-9">{{ $v->fecha }}</div>
+                        <div class="col-1 text-right ses-text-muted">{{ ++$key }}.-</div>
+                        <div class="col-2 text-center">
+                          @if($v->active == 1)
+                              <span class="badge badge-primary"><i class="bi bi-calendar-check"></i> Reservado</span>
+                          @elseif($v->active == 2)
+                              <span class="badge badge-success"><i class="bi bi-calendar-check"></i> Visitado</span>
+                          @elseif($v->active == 3)
+                              <span class="badge badge-danger"><i class="bi bi-calendar-check"></i> No Asistio</span>
+                          @endif
+                        </div>
+                        <div class="col-9">
+                          {{ \Carbon\Carbon::parse($v->fecha)->translatedFormat('j \d\e F \d\e Y') }}
+                        </div>
                       </div>
                     </div>
                   @endforeach

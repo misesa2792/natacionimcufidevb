@@ -14,6 +14,7 @@ class Nadadores extends Model
         'active',
         'idplan',
         'idniveles',
+        'iddescuento',
         'nombre',
         'curp',
         'fecha_nacimiento',
@@ -26,7 +27,7 @@ class Nadadores extends Model
         'titular_domicilio',
         'idparentesco',
         'comentarios',
-        'telefono_emergencia'
+        'telefono_emergencia',
     ];
 
 	public $timestamps = false;
@@ -39,6 +40,7 @@ class Nadadores extends Model
             ->leftjoin('ses_genero as g', 'g.idgenero', '=', 'n.idgenero')
             ->leftjoin('ses_plan as pa', 'pa.idplan', '=', 'n.idplan')
             ->leftjoin('ses_niveles as ni', 'ni.idniveles', '=', 'n.idniveles')
+            ->leftjoin('ses_descuento as de', 'de.iddescuento', '=', 'n.iddescuento')
             ->select([
                 'n.idnadador as id',
                 'n.active',
@@ -49,7 +51,9 @@ class Nadadores extends Model
                 'g.descripcion as genero',
                 'n.domicilio',
                 'n.edad',
-                'ni.descripcion as nivel'
+                'ni.descripcion as nivel',
+                'de.descripcion as desc_descuento',
+                'de.descuento'
             ])
             ->orderBy('n.idnadador', 'asc');
 
@@ -78,6 +82,30 @@ class Nadadores extends Model
                 's.descripcion as nivel',
                 'p.max_visitas_mes',
             ])
+            ->get();
+	}
+    public static function catalogoDescuentos()
+	{
+        return DB::table('ses_descuento')
+            ->select([
+                'iddescuento as id',
+                'descripcion',
+                'descuento',
+            ])
+            ->get();
+	}
+    public static function catalogoPlanNivel($idnivel)
+	{
+        return DB::table('ses_plan as p')
+            ->join('ses_niveles as s', 's.idniveles', '=', 'p.idniveles')
+            ->select([
+                'p.idplan as id',
+                'p.nombre as plan',
+                'p.precio',
+                's.descripcion as nivel',
+                'p.max_visitas_mes',
+            ])
+            ->where('s.idniveles', $idnivel)
             ->get();
 	}
     public static function catalogoParentesco()

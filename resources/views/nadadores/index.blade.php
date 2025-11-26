@@ -99,6 +99,7 @@
                                     <th>Nadador</th>
                                     <th class="text-center">CURP</th>
                                     <th colspan="2">Nivel <i>(Plan)</i></th>
+                                    <th>Descuento</th>
                                     <th class="text-center">Genero</th>
                                     <th class="text-center">Edad</th>
                                     <th class="text-center">Fecha Nacimiento</th>
@@ -124,6 +125,7 @@
                                             @endif
                                         </td>
                                         <td>{{ $n->nivel }} <i>({{ $n->plan }})</i></td>
+                                        <td>{{ $n->desc_descuento }} <i>({{ $n->descuento }}%)</i></td>
                                         <td class="text-center">{{ $n->genero }}</td>
                                         <td class="text-center">{{ $n->edad }}</td>
                                         <td class="text-center">{{ $n->fecha_nacimiento }}</td>
