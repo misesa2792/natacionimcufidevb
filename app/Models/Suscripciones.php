@@ -40,13 +40,16 @@ class Suscripciones extends Model
 		$query = DB::table('ses_nadador as n')
 			->leftjoin('ses_plan as p', 'p.idplan', '=', 'n.idplan')
 				->leftjoin('ses_niveles as s', 's.idniveles', '=', 'p.idniveles')
+			->leftjoin('ses_descuento as de', 'de.iddescuento', '=', 'n.iddescuento')
 			->select([
 				'n.idnadador as id',
 				'n.active',
 				'n.nombre',
 				'n.curp',
 				'p.nombre as plan',
-				's.descripcion as nivel'
+				's.descripcion as nivel',
+				'de.descripcion as desc_descuento',
+				'de.descuento',
 			])
 			->orderBy('n.nombre', 'asc');
 		// Filtros opcionales (ejemplo)
@@ -123,6 +126,7 @@ class Suscripciones extends Model
 					->join('ses_niveles as ni', 'ni.idniveles', '=', 'pl.idniveles')
 				->join('ses_genero as g', 'g.idgenero', '=', 'n.idgenero')
 				->join('ses_parentesco as pa', 'pa.idparentesco', '=', 'n.idparentesco')
+				->leftjoin('ses_descuento as de', 'de.iddescuento', '=', 'n.iddescuento')
 				->select([
 					'n.active',
 					'n.nombre',
@@ -131,6 +135,9 @@ class Suscripciones extends Model
 					'g.descripcion as genero',
 					'n.domicilio',
 					'n.edad',
+					'n.iddescuento',
+					'de.descripcion as desc_descuento',
+					'de.descuento',
 					'pl.nombre as plan',
 					'pl.idplan',
 					'pl.idniveles',

@@ -55,6 +55,7 @@ class SuscripcionesController extends Controller
                 'nombre'        => $row->nombre,
                 'nivel'         => $row->nivel,
                 'plan'          => $row->plan,
+                'descuento'     => $row->desc_descuento.'('.$row->descuento.'%)',
                 'rowsPagos'     => $this->dataPagosAlumno($row->id, $idyear),
             ];
         });
@@ -293,15 +294,18 @@ class SuscripcionesController extends Controller
     public function pagar(Request $request)
     {
         $row = $this->model->nadadorID($request->id);
-        $this->data['row'] = $row;
-        $this->data['rowsFechas'] = $this->model->fechasTemporales($request->id, $request->time);
-        $this->data['rowsDescuento'] = $this->model->descuentos();
-        $this->data['id'] = $request->id;
-        $this->data['idm'] = $request->idm;
-        $this->data['idy'] = $request->idy;
-        $this->data['time'] = $request->time;
-        $this->data['mes'] = $this->nombreMes($request->idm);
-        return view($this->module.'.pagar',$this->data);
+        if($row){
+            $this->data['row'] = $row;
+            $this->data['rowsFechas'] = $this->model->fechasTemporales($request->id, $request->time);
+            $this->data['rowsDescuento'] = $this->model->descuentos();
+            $this->data['id'] = $request->id;
+            $this->data['idm'] = $request->idm;
+            $this->data['idy'] = $request->idy;
+            $this->data['time'] = $request->time;
+            $this->data['mes'] = $this->nombreMes($request->idm);
+            return view($this->module.'.pagar',$this->data); 
+        }
+       
     }
     private function calculoDescuento($precio, $descuento){
         return ($precio * ($descuento / 100));

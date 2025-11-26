@@ -62,9 +62,27 @@
 
 
                         <div class="row ">
-                            <div class="col-9">
+                            <div class="col-3">
                                 <div class="ses-text-muted fw-bold">Nombre</div>
                                 <input type="text" name="name" class="form-control" placeholder="Ingresa nombre">
+                            </div>
+                            <div class="col-3">
+                                <div class="ses-text-muted fw-bold">Nivel</div>
+                                <select name="idnivel" class="form-control js-select2">
+                                    <option value="0">--Selecciona nivel--</option>
+                                    @foreach($rowsNiveles as $key => $v)
+                                    <option value="{{ $v->idniveles }}">{{ $v->descripcion }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <div class="ses-text-muted fw-bold">Planes</div>
+                                <select name="idplan" class="form-control js-select2">
+                                    <option value="0">--Selecciona nivel con plan--</option>
+                                    @foreach($rowsPlan as $key => $v)
+                                    <option value="{{ $v->id }}">{{ $v->nivel.' ('.$v->plan.') $'.$v->precio }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                              <div class="col-auto">
                                 <div class="ses-text-muted fw-bold">Paginación</div>
@@ -159,6 +177,13 @@
         </div>
     </main>
 
-   
+   @section('plugins.Select2', true)
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.jQuery && $.fn.select2) {
+        $('.js-select2').select2();
+      }
+    });
+</script>
 
 @stop

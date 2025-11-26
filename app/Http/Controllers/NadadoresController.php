@@ -32,10 +32,14 @@ class NadadoresController extends Controller
 
         $nopage = $request->integer('nopagina', static::$perpage);
         $page = $request->integer('page', 1);
+        $idplan = $request->integer('idplan', 0);
+        $idnivel = $request->integer('idnivel', 0);
         $name = $request->input('name', '');
 
         $request['nopagina'] = $nopage;
         $request['name'] = $name;
+        $request['idplan'] = $idplan;
+        $request['idnivel'] = $idnivel;
 
         $rows =  $this->model->listData($request->all());
         /*$rows->getCollection()->transform(function ($row) {
@@ -45,7 +49,8 @@ class NadadoresController extends Controller
                 'rowsNadadores' => $this->model->listaNadadores($row->id),
             ];
         });*/
-
+        $this->data['rowsPlan'] = $this->model->catalogoPlan();
+        $this->data['rowsNiveles'] = Nivel::all();
 		$this->data['j'] = ($page * $nopage) - $nopage;
         $this->data['pagination'] = $rows;
         return view($this->module.'.index',$this->data);

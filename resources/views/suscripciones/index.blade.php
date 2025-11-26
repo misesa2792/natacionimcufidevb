@@ -75,7 +75,7 @@
                                     <tr>
                                         <th class="text-center" width="40">#</th>
                                         <th>Alumno</th>
-                                        <th>Nivel</th>
+                                        <th>Nivel/Descuento</th>
                                         @foreach($meses as $mes)
                                             <th class="text-center ses-th-mes">{{ $mes }}</th>
                                         @endforeach
@@ -90,7 +90,10 @@
                                         <td>
                                             <div class="fw-semibold text-dark">{{ $v['nombre'] }}</div>
                                         </td>
-                                        <td>{{ $v['nivel'] }} (<i>{{ $v['plan'] }}</i>) </td>
+                                        <td>
+                                            <div class="text-secondary">{{ $v['nivel'] }} (<i>{{ $v['plan'] }}</i>) </div>
+                                            <div class="mt-1"><small>{{ $v['descuento'] }}</small> </div>
+                                        </td>
 
                                         @foreach($meses as $idmes => $mes)
                                             <td class="text-center">

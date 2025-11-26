@@ -60,6 +60,12 @@ class Nadadores extends Model
         if (!empty($request['name']) && trim($request['name']) !== '') {
 			$query->where('n.nombre', 'like', '%'.trim($request['name']).'%');
 		}
+        if ($request['idplan'] != 0) {
+			$query->where('n.idplan', $request['idplan']);
+		}
+        if ($request['idnivel'] != 0) {
+			$query->where('n.idniveles', $request['idnivel']);
+		}
 		return $query->paginate($perPage)->appends($request);
 	}
     public static function catalogoGenero()

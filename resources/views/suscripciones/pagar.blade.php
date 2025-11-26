@@ -65,6 +65,15 @@
                     </div>
                   </div>
 
+                  <div class="mb-3">
+                    <div class="row">
+                      <div class="col-3 text-right ses-text-muted">Descuento registrado:</div>
+                      <div class="col-9">
+                        {{ $row->desc_descuento }} <i>({{ $row->descuento }}%)</i>
+                      </div>
+                    </div>
+                  </div>
+
               </div>
             </div>
 
@@ -95,7 +104,9 @@
                       <div class="col-9">
                         <select name="iddescuento" class="form-control js-descuento">
                           @foreach ($rowsDescuento as $v)
-                          <option value="{{ $v->id }}" data-descuento="{{ $v->descuento }}">{{ $v->descripcion }} ({{ $v->descuento }}%)</option>
+                          <option value="{{ $v->id }}" 
+                                @selected($row->iddescuento == $v->id)
+                                data-descuento="{{ $v->descuento }}">{{ $v->descripcion }} ({{ $v->descuento }}%)</option>
                           @endforeach
                         </select>
                       </div>
