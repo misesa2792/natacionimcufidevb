@@ -13,6 +13,7 @@ class Nadadores extends Model
     protected $fillable = [
         'active',
         'idplan',
+        'idniveles',
         'nombre',
         'curp',
         'fecha_nacimiento',
@@ -24,6 +25,8 @@ class Nadadores extends Model
         'titular_email',
         'titular_domicilio',
         'idparentesco',
+        'comentarios',
+        'telefono_emergencia'
     ];
 
 	public $timestamps = false;
@@ -33,8 +36,9 @@ class Nadadores extends Model
 		$perPage = $request['nopagina']; // default
 
         $query = DB::table('ses_nadador as n')
-            ->join('ses_genero as g', 'g.idgenero', '=', 'n.idgenero')
-            ->join('ses_plan as pa', 'pa.idplan', '=', 'n.idplan')
+            ->leftjoin('ses_genero as g', 'g.idgenero', '=', 'n.idgenero')
+            ->leftjoin('ses_plan as pa', 'pa.idplan', '=', 'n.idplan')
+            ->leftjoin('ses_niveles as ni', 'ni.idniveles', '=', 'n.idniveles')
             ->select([
                 'n.idnadador as id',
                 'n.active',
@@ -45,6 +49,7 @@ class Nadadores extends Model
                 'g.descripcion as genero',
                 'n.domicilio',
                 'n.edad',
+                'ni.descripcion as nivel'
             ])
             ->orderBy('n.idnadador', 'asc');
 
@@ -64,13 +69,14 @@ class Nadadores extends Model
 	}
     public static function catalogoPlan()
 	{
-        return DB::table('ses_plan')
+        return DB::table('ses_plan as p')
+            ->join('ses_niveles as s', 's.idniveles', '=', 'p.idniveles')
             ->select([
-                'idplan as id',
-                'nombre as plan',
-                'descripcion',
-                'precio',
-                'max_visitas_mes',
+                'p.idplan as id',
+                'p.nombre as plan',
+                'p.precio',
+                's.descripcion as nivel',
+                'p.max_visitas_mes',
             ])
             ->get();
 	}

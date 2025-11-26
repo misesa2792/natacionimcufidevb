@@ -2,32 +2,6 @@
 
 @section('content')
 
-<div style="display: none;">
-    
- <form action="{{ route('nadadores.upload') }}" method="POST" enctype="multipart/form-data">
-    @csrf
-
-    <div class="mb-3">
-        <label for="archivo" class="form-label">Seleccionar archivo Excel</label>
-        <input type="file" 
-                name="archivo" 
-                id="archivo" 
-                class="form-control"
-                accept=".xlsx,.xls,.csv">
-        <small class="text-muted">Formatos permitidos: .xlsx, .xls, .csv</small>
-    </div>
-
-    <button type="submit" class="btn btn-sm btn-primary">
-        <i class="fa fa-upload me-1"></i> Subir y procesar
-    </button>
-
-    <a href="{{ url()->previous() }}" class="btn btn-sm btn-secondary ms-2">
-        <i class="fa fa-arrow-left me-1"></i> Regresar
-    </a>
-</form>
-
-</div>
-
     <main class="row">
         <div class="col-md-12">
 
@@ -40,17 +14,18 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ URL::to('dashboard') }}"> <i class="fa fa-home"></i> </a></li>
                         <li class="breadcrumb-item">
-                            <a href="{{ route($pageModule.'.index') }}" class="text-decoration-none"><i>{{ $pageTitle }}</i></a>
+                            <a href="{{ route('usuarios.index') }}" class="text-decoration-none"><i>{{ $pageTitle }}</i></a>
                         </li>
                     </ol>
                 </nav>
             </div>
 
-            <div class="row sbox mt-3">
+ 
+            <div class="row sbox">
                 <div class="sbox-title">
                     <h5><i class="fa fa-table"></i> <strong>{{ $pageTitle }}</strong></h5>
                     <div class="sbox-tools">
-                       <a href="{{ route($pageModule . '.create',['page' => request()->page]) }}"
+                       <a href="{{ route($pageModule . '.create') }}"
                             class="btn btn-xs btn-primary ses-text-white">
                             <i class="fa-solid fa-circle-plus"></i> Agregar
                         </a>
@@ -95,47 +70,37 @@
                             <thead>
                                 <tr>
                                     <th width="30">#</th>
-                                    <th width="60">Estatus</th>
-                                    <th>Nadador</th>
-                                    <th class="text-center">CURP</th>
-                                    <th colspan="2">Nivel <i>(Plan)</i></th>
-                                    <th class="text-center">Genero</th>
-                                    <th class="text-center">Edad</th>
-                                    <th class="text-center">Fecha Nacimiento</th>
-                                    <th>Domicilio</th>
-                                    <th class="text-center">Acción</th>
+                                    <th width="50">Estatus</th>
+                                    <th>Nivel</th>
+                                    <th class="text-center">Aforo máximo</th>
+                                    <th class="text-center" width="50">Editar</th>
+                                    <th class="text-center" width="150">Horario</th>
                                 </tr>
                             </thead>
                              @foreach ($pagination as $n)
-                                    <tr>
-                                        <td class="text-center">{{ ++$j }}</td>
-                                        <td class="text-center">
-                                            @if($n->active == 1)    
-                                                <span class="badge badge-success">Activo</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $n->nadador }}</td>
-                                        <td class="text-center">{{ $n->curp }}</td>
-                                        <td width="50">
-                                            @if(!empty($n->plan))
-                                                <span class="badge badge-success">Validado</span>
-                                            @else
-                                                <span class="badge badge-danger">Pendiente</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $n->nivel }} <i>({{ $n->plan }})</i></td>
-                                        <td class="text-center">{{ $n->genero }}</td>
-                                        <td class="text-center">{{ $n->edad }}</td>
-                                        <td class="text-center">{{ $n->fecha_nacimiento }}</td>
-                                        <td>{{ $n->domicilio }}</td>
-                                        <td class="text-center">
-                                            <a href="{{ route($pageModule . '.edit', ['id' => $n->id, 'page' => request()->page]) }}"
-                                                class="btn btn-xs btn-white">
-                                                <i class="fa-solid fa-pen"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                <tr>
+                                    <td class="text-center">{{ ++$j }}</td>
+                                    <td class="text-center">
+                                        @if($n->active == 1)    
+                                            <span class="badge badge-success">Activo</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $n->nivel }}</td>
+                                    <td class="text-center">{{ $n->aforo_maximo }}</td>
+                                    <td class="text-center">
+                                        <a href="{{ route($pageModule . '.edit', ['id' => $n->id, 'page' => request()->page]) }}"
+                                            class="btn btn-xs btn-white">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="{{ route($pageModule . '.horarios', ['id' => $n->id, 'page' => request()->page]) }}"
+                                            class="btn btn-xs btn-white">
+                                            <i class="bi bi-calendar-week"></i> Horario
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </table>
                     @else
                         {{-- Vista alternativa sin tabla cuando no hay registros --}}

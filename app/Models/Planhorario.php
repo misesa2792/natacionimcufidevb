@@ -11,9 +11,8 @@ class Planhorario extends Model
     protected $primaryKey = 'idplan_horario'; 
 
     protected $fillable = [
-        'idplan',
+        'idniveles',
         'dia_semana',
-        'aforo_maximo',
         'time_start',
         'time_end'
     ];

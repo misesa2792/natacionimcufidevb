@@ -17,6 +17,7 @@ class Reserva extends Model
         'fecha',
         'active'
     ];
+	public $timestamps = false;
 
     public static function listData($request)
 	{

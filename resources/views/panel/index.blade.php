@@ -4,103 +4,27 @@
 
 
 
-<main class="row">
+<main class="row ">
   <div class="col-12">
-    <div class="page-header">
-      <div class="page-title">
-          <h4 class="text-blue-900"> <strong>{{ $pageTitle }}</strong> <small class="text-gray-400"><i>{{ $pageNote }}</i></small></h4>
-      </div>
-      
-      <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="{{ URL::to('dashboard') }}"> <i class="fa fa-home s-18"></i> </a></li>
-              <li class="breadcrumb-item">
-                  <a href="{{ route($pageModule.'.index') }}" class="text-decoration-none"><i>{{ $pageTitle }}</i></a>    
-              </li>
-              <li class="breadcrumb-item active"><i class="ses-text-muted">Seleccionar horario</i></li>
-          </ol>
-      </nav>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <a href="{{ route($pageModule.'.index') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
-            <i class="fa fa-arrow-left me-1"></i> Regresar
-        </a>
-      </div>
-    </div>
   
-    <div class="row mt-2">
-      <div class="row">
-        <div class="col-8">
-            <div class="sbox">
-              <div class="sbox-title ses-text-muted">
-                  <h5><i class="fa fa-table"></i> <strong> Alumno</strong></h5>
-              </div>
-              <div class="sbox-content"> 
-
-                  <div class="mb-3">
-                    <div class="row">
-                      <div class="col-3 text-right ses-text-muted">Nombre completo:</div>
-                      <div class="col-9 ses-text-blue">{{ $row->nombre }}</div>
-                    </div>
-                  </div>
-
-                  <div class="mb-3">
-                    <div class="row">
-                      <div class="col-3 text-right ses-text-muted">Plan:</div>
-                      <div class="col-3"><strong>{{ $row->nivel }}</strong> <i>({{ $row->plan }})</i></div>
-                      <div class="col-3 text-right ses-text-muted">Precio:</div>
-                      <div class="col-3"><strong>${{ $row->precio }}</strong></div>
-                    </div>
-                  </div>
-
-                  <div class="mb-3">
-                    <div class="row">
-                      <div class="col-3 text-right ses-text-muted">Mes a pagar:</div>
-                      <div class="col-3">{{ $mes }}</div>
-                      <div class="col-3 text-right ses-text-muted">Máximo de visitas al mes:</div>
-                      <div class="col-3">{{ $row->max_visitas_mes }}</div>
-                    </div>
-                  </div>
-
-              </div>
-            </div>
-        </div>
-        <div class="col-4">
-        </div>
-
+    <div class="row mt-3">
         <div class="col-12">
 
+        @foreach ($rowsNiveles as $v)
+            <a href="{{ route($pageModule . '.calendario', ['idy' => $idy, 'idm' => $idm, 'idn' =>  $v->id ]) }}" 
+              class="btn btn-xs  {{ $idn == $v->id ? 'btn-outline-primary' : 'btn-white' }}"><i class="bi bi-calendar3"></i> {{ $v->nivel }}</a>
+        @endforeach
 
-<form action="{{ route($pageModule.'.temporal',['id' => $id, 'idm' => $idm, 'idy' => $idy]) }}" method="POST">
-@csrf
-  <main class="row">
+  <main class="row mt-3">
     <div class="col-12">
 
       <div class="sbox">
         <div class="sbox-title d-flex justify-content-between align-items-center">
           <h5 class="mb-0">
             <i class="bi bi-calendar3 me-1"></i>
-            Calendario de horarios - {{ \Carbon\Carbon::create($year, $month)->translatedFormat('F Y') }}
+            Calendario de clases - {{ \Carbon\Carbon::create($year, $month)->translatedFormat('F Y') }}
           </h5>
 
-         
-          <div  style="display: none">
-             {{-- Navegación simple de mes --}}
-          @php
-            $prev = \Carbon\Carbon::create($year, $month)->subMonth();
-            $next = \Carbon\Carbon::create($year, $month)->addMonth();
-          @endphp
-            <a href="{{ request()->fullUrlWithQuery(['month' => $prev->month, 'year' => $prev->year]) }}"
-              class="btn btn-sm btn-outline-secondary">
-              &laquo; Mes anterior
-            </a>
-            <a href="{{ request()->fullUrlWithQuery(['month' => $next->month, 'year' => $next->year]) }}"
-              class="btn btn-sm btn-outline-secondary">
-              Siguiente mes &raquo;
-            </a>
-          </div>
         </div>
 
         <div class="sbox-content">
@@ -169,12 +93,15 @@
                     }
                 @endphp
 
-                        <label class="horario-pill w-100 {{ $estadoClase }} {{ $clickable ? '' : 'horario-disabled' }}" style="margin-bottom:0px;">
+                        <label class="horario-pill w-100 {{ $estadoClase }}  js-open-modal" 
+                          data-idph="{{ $h['idplan_horario'] }}"
+                          data-fecha="{{ $date->format("Y-m-d") }}"
+                           style="margin-bottom:0px;">
                             @if($clickable)
-                              <input type="checkbox"
+                              <input type="radio"
                                 name="idplan_horario[]"
                                 value='@json(["idplan_horario" => $h['idplan_horario'], "fecha" => $date->format("Y-m-d")])'
-                                class="d-none">
+                                class="d-none js-radio-horario">
                             @endif
 
                             <div class="horario-content">
@@ -212,17 +139,9 @@
     </div>
   </main>
 
-  <div class="row">
-     <div class="col-12 mb-6 text-center">
-      <button type="submit" name="save" class="btn btn-lg btn-primary ses-text-white"><i class="bi bi-calendar-plus me-2"></i> Asignar horario</button>
-    </div>
-  </div>
-    
-</form>
 
         </div>
 
-      </div>
 
     </div>
 
@@ -230,6 +149,123 @@
        
 
 </main>
+
+<!-- Modal selección de horario -->
+<div class="modal fade" id="modalHorario" tabindex="-1" aria-labelledby="modalHorarioLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-top modal-lg ">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalHorarioLabel"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <div class="modal-body" id="ses-modal-body">
+      
+      </div>
+
+      <div class="modal-footer">
+        
+      </div>
+
+    </div>
+  </div>
+</div>
+
+@push('js')
+<script>
+  $(function () {
+
+      $(document).on('click', '.js-open-modal', function () {
+
+          const idplan = $(this).data('idph');
+          const fecha  = $(this).data('fecha');
+
+          // Abrir modal (Bootstrap)
+          $('#modalHorario').modal('show');
+          $('#modalHorarioLabel').html('Lista de alumnos - Fecha ' + fecha);
+        
+          loadInfo(idplan, fecha);
+      });
+
+      function loadInfo(idplan, fecha){
+        axios.get("{{ route($pageModule.'.info') }}", {
+              params: {
+                  idplan_horario: idplan,
+                  fecha: fecha
+              }
+          })
+          .then((resp) => {
+              $("#ses-modal-body").empty().append(resp.data);
+          })
+          .catch((err) => {
+          });
+      }
+
+      $(document).on('click', '.js-asistencia', function () {
+
+    const idreserva = $(this).data('id');
+    const estado    = $(this).data('estado');
+    const idplan    = $(this).data('idplan');
+    const fecha     = $(this).data('fecha');
+    const alumno     = $(this).data('alumno');
+
+    // Mensajes según estado
+    const estadoTxt = estado == 2 ? "confirmar asistencia" : "marcar como NO asistió";
+    const estadoBadge = estado == 2 ? "success" : "error";
+
+    Swal.fire({
+        title: "¿Deseas " + estadoTxt + "?",
+        text: alumno,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí, continuar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#16A34A",
+        cancelButtonColor: "#6B7280",
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            axios.post("{{ route($pageModule.'.asistencia') }}", {
+                id: idreserva,
+                std: estado
+            })
+            .then((resp) => {
+              let row = resp.data;
+              
+              if(row.status == 'success'){
+                Swal.fire({
+                    title: row.message,
+                    text: resp.data.message,
+                    icon: estadoBadge,
+                    toast: true,
+                    position: "top-end",
+                    timer: 1500,
+                    showConfirmButton: false,
+                    background: "#ffffff",
+                    iconColor: estadoBadge === "success" ? "#16A34A" : "#DC2626",
+                });
+                loadInfo(idplan, fecha);
+              }
+               
+            })
+            .catch((err) => {
+                Swal.fire({
+                    title: "Error",
+                    text: "No se pudo guardar la asistencia.",
+                    icon: "error"
+                });
+            });
+
+        }
+
+    });
+
+});
+
+  });
+</script>
+@endpush
 
 <style>
   /* Base */

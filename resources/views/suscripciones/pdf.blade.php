@@ -69,89 +69,30 @@
   </head>
   <body>
       
-      <table width="100%" >
-          <tr>
-            <td style="width:130px;">
-              <img src='{{ public_path("mass/images/logo/imcufide.png") }}'  style='width: 190px;height:50px;'>
-            </td>
-            <th class="c-gray2 s-14 text-center">COMPROBANTE DE SUSCRIPCIÓN</th>
-            <th class="text-center">FOLIO : <span class="c-red s-17">{{ $folio }}</span>
-              <div class="s-8">{{ $row->fi_formateada }}</div>
-            </th>
-          </tr>
+     @include('suscripciones.pdf_body',['title' => 'no'])
 
-          <tr>
-            <td colspan="3" class="b-t-red"></td>
-          </tr>
+    <br>
 
-          <tr>
-            <td colspan="3" class="b-t-smart"></td>
-          </tr>
+    <table width="100%">
+      <tr>  
+        <th width="30%"></th>
+        <th>
+          RECIBIO:____________________________________________
+        </th>
+        <th width="30%"></th>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="text-center">(Nombre y firma)</td>
+        <td></td>
+      </tr>
+    </table>
 
-           <tr>
-            <td colspan="2" class="s-14">
-                <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">Nombre del nadador:</strong>
-                    <span class="c-black s-10">{{ $row->nombre }}</span>
-                </div>
-                <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">CURP:</strong>
-                    <span class="c-black s-10">{{ $row->curp }}</span>
-                </div>
-                <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">Plan contratado:</strong>
-                  <span class="c-black s-10">{{ $row->plan }}</span>
-                </div>
-                <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">Tipo de pago:</strong>
-                    <span class="c-black s-10">{{ $row->pago }}</span>
-                </div>
-                <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">Fecha inicio:</strong>
-                    <span class="c-black s-10">{{ $row->fi_formateada }}</span>
-                </div>
-                <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">Fecha fin:</strong>
-                    <span class="c-black s-10">{{ $row->ff_formateada }}</span>
-                </div>
-                <div class="c-gray2 m-t-5"><strong class="p-r-10 s-12">Total de visitas permitidas por plan:</strong>
-                    <span class="c-black s-10">{{ $row->max_visitas_mes }}</span>
-                </div>
-            </td>
-            <th>
-              <div  class="c-smart text-center s-22">PAGADO</div>
-            </th>
-          </tr>
-      </table>
+    <br>
 
-      <br>
+     @include('suscripciones.pdf_body',['title' => 'si'])
 
-      <table width="100%" class="my-table">
-        <tr>
-          <th class="text-center bg-dark">#</th>
-          <th class="text-center bg-dark">Estatus</th>
-          <th class="text-center bg-dark">Fechas reservadas</th>
-          <th class="text-center bg-dark">Horarios</th>
-        </tr>
-        @foreach ($rows as $r)
-          <tr>
-            <td class="text-center">{{ $j++ }}</td>
-            <td class="text-center">Reservado</td>
-            <td class="text-center">{{ $r->fecha_formateada }}</td>
-            <td class="text-center">{{ $r->time_start .' - ' .$r->time_end }}</td>
-          </tr>
-        @endforeach
-          <tr>
-            <th colspan="3" class="text-right">Total:</th>
-            <th class="text-center">${{ $row->monto }}</th>
-          </tr>
-      </table>
-
-        <table width="100%" >
-          <tr>
-            <td colspan="3" class="text-center c-gray s-12">
-                <br>
-                <div><strong>IMCUFIDE Valle de Bravo</strong> </div>
-                <div><strong>2025 - 2027</strong> </div>
-                <div>Conserve este tiket para cualquier aclaración.  </div>
-                <div> Este documento NO es un comprobante fiscal si lo requiere solicitelo.</div>
-            </td>
-          </tr>
-      </table>
+    
 
   </body>
 </html>

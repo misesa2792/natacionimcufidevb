@@ -71,7 +71,7 @@
                                     <th width="30">#</th>
                                     <th width="50">Estatus</th>
                                     <th>Nivel</th>
-                                    <th>Descripción</th>
+                                    <th>Planes</th>
                                     <th class="text-center">Precio</th>
                                     <th class="text-center">Duración del plan (días)</th>
                                     <th class="text-center">Vigencia</th>
@@ -86,22 +86,15 @@
                                             <span class="badge badge-success">Activo</span>
                                         @endif
                                     </td>
+                                    <td>{{ $n->nivel }}</td>
                                     <td>{{ $n->plan }}</td>
-                                    <td>{{ $n->descripcion }}</td>
                                     <td class="text-center">${{ $n->precio }}</td>
                                     <td class="text-center">{{ $n->max_visitas_mes }}</td>
                                     <td class="text-center">Vigencia de {{ $n->duracion_dias }} días</td>
                                     <td class="text-center">
-                                        <a href="{{ route($pageModule . '.edit', ['id' => $n->id]) }}"
+                                        <a href="{{ route($pageModule . '.edit', ['id' => $n->id, 'page' => request()->page]) }}"
                                             class="btn btn-xs btn-white">
                                             <i class="bi bi-pencil"></i>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        
-                                        <a href="{{ route($pageModule . '.horarios', $n->id) }}"
-                                            class="btn btn-xs btn-white">
-                                            <i class="bi bi-calendar-week"></i> Horario
                                         </a>
                                     </td>
                                 </tr>

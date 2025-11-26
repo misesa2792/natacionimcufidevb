@@ -12,8 +12,8 @@ class Niveles extends Model
 
     protected $fillable = [
         'active',
+        'idniveles',
         'nombre',
-        'descripcion',
         'precio',
         'duracion_dias',
         'max_visitas_mes'
@@ -26,14 +26,15 @@ class Niveles extends Model
 		$perPage = $request['nopagina']; // default
 
         $query = DB::table('ses_plan as n')
+			->join('ses_niveles as s', 's.idniveles', '=', 'n.idniveles')
             ->select([
                 'n.idplan as id',
                 'n.active',
                 'n.nombre as plan',
-                'descripcion',
-                'precio',
-                'duracion_dias',
-                'max_visitas_mes'
+                'n.precio',
+                's.descripcion as nivel',
+                'n.duracion_dias',
+                'n.max_visitas_mes'
             ])
             ->orderBy('n.idplan', 'asc');
 
@@ -42,18 +43,17 @@ class Niveles extends Model
 		}
 		return $query->paginate($perPage)->appends($request);
 	}
-    public static function listHorarioPlan($id)
+   
+    public static function catalogoNiveles()
 	{
-        return DB::table('ses_plan_horario')
+        return DB::table('ses_niveles')
             ->select([
-                'idplan_horario as id',
-                'dia_semana',
-                'aforo_maximo',
-                DB::raw('DATE_FORMAT(time_start, "%h:%i %p") as time_start'),
-                DB::raw('DATE_FORMAT(time_end, "%h:%i %p") as time_end'),
+                'idniveles as id',
+                'active',
+                'descripcion as nivel'
             ])
-            ->where('idplan', $id)
             ->get();
 	}
+ 
  
 }

@@ -28,37 +28,21 @@
         <div class="col-12">
             <div class="sbox">
                 <div class="sbox-title ses-text-muted">
-                    <h5><i class="fa fa-table"></i> <strong>Registrar nuevo plan</strong></h5>
+                    <h5><i class="fa fa-table"></i> <strong>Nivel</strong></h5>
                 </div>
 
                 <div class="sbox-content">
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Nivel:</label>
-                        <select name="idniveles" class="form-control js-select2" required>
-                            <option value="">--Selecciona el nivel--</option>
-                            @foreach($rowsNiveles as $v)
-                                <option value="{{ $v->id }}" @selected($row->idniveles == $v->id)>{{ $v->nivel }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Nombre del plan:</label>
-                        <input type="text" name="nombre" value="{{ $row->nombre }}" class="form-control" placeholder="Escribe el nombre del plan" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Precio:</label>
-                        <input type="text" name="precio" value="{{ $row->precio }}" class="form-control" placeholder="Ejemplo: 250.00" required>
+                        <label class="form-label fw-bold ses-text-muted">Nombre del nivel:</label>
+                        <input type="text" name="descripcion" value="{{ $row->descripcion }}" class="form-control" placeholder="Escribe el nombre del nivel" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Visitas máximas incluidas (Max. 30 visitas):</label>
-                        <input type="number" name="max_visitas_mes" value="{{ $row->max_visitas_mes }}" class="form-control" placeholder="Número de visitas permitidas" required>
+                        <label class="form-label fw-bold ses-text-muted">Aforo máximo:</label>
+                        <input type="text" name="aforo_maximo" value="{{ $row->aforo_maximo }}" class="form-control" placeholder="Aforo máximo" required>
                     </div>
-
+                  
                     <div class="mt-3 text-center">
                       <button type="button"
                           onclick="location.href='{{ route($pageModule.'.index', ['page' => request()->page]) }}'" class="btn btn-sm btn-white">

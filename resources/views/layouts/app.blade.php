@@ -7,8 +7,12 @@
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 @stop
 
-{{-- Encabezado de contenido (aparece bajo el header) --}}
+{{-- Encabezado de contenido (aparece bajo el header) 
 @section('content_header')
+
+@stop
+--}}
+
     
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -23,7 +27,6 @@
       });
     });
 </script>
-@stop
 
 {{-- Contenido principal --}}
 @section('content')

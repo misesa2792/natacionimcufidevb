@@ -334,45 +334,54 @@ return [
         'url'  => 'dashboard',
         'icon' => 'fas fa-fw fa-tachometer-alt',
     ],
-    ['header' => 'Módulos'],
+    ['header' => 'Catálogos'],
         [
             'text'    => 'Usuarios',
             'icon'    => 'bi bi-people',
             'url'     => 'usuarios',
             'can'     => 'menu-usuarios',
-            'order'     => 3,
         ],
         [
-            'text'    => 'Nadadores',
+            'text'    => 'Niveles',
+            'icon'    => 'bi bi-card-checklist',
+            'url' => 'nivel',
+        ],
+        [
+            'text'    => 'Planes',
+            'icon'    => 'bi bi-card-checklist',
+            'url' => 'niveles',
+            'can'     => 'menu-niveles',
+        ],
+       
+    ['header' => 'Módulos'],
+        [
+            'text'    => 'Alumnos',
             'icon'    => 'bi bi-droplet-half',
             'url' => 'nadadores',
             'can'     => 'menu-nadadores',
         ],
         [
-            'text'    => 'Niveles',
-            'icon'    => 'bi bi-card-checklist',
-            'url' => 'niveles',
-            'can'     => 'menu-niveles',
-        ],
-        [
-            'text'    => 'Suscripciones',
+            'text'    => 'Pagos',
             'icon'    => 'bi bi-credit-card-fill',
             'url' => 'suscripciones',
             'can'     => 'menu-suscripciones',
         ],
-        [
-            'text'    => 'Control de Asistencia',
-            'icon'    => 'bi bi-journal-check',
-            'url' => 'asistencias',
-            'can'     => 'menu-asistencias',
-        ],
+      
         [
             'text'    => 'Transacciones',
             'icon'    => 'bi bi-cash-coin',
             'url' => 'transacciones',
             'can'     => 'menu-transacciones',
-        ]
+        ],
+    ['header' => 'Control de Asistencia'],
+        [
+            'text'    => 'Registrar',
+            'icon'    => 'bi bi-journal-check',
+            'url' => 'asistencias',
+            'can'     => 'menu-asistencias',
+        ],
     ],
+    
     
     
 

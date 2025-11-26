@@ -29,33 +29,19 @@
         <div class="col-12">
             <div class="sbox">
                 <div class="sbox-title ses-text-muted">
-                    <h5><i class="fa fa-table"></i> <strong>Registrar nuevo plan</strong></h5>
+                    <h5><i class="fa fa-table"></i> <strong>Registrar nuevo nivel</strong></h5>
                 </div>
 
                 <div class="sbox-content">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Nivel:</label>
-                        <select name="idniveles" class="form-control js-select2" required>
-                            <option value="">--Selecciona el nivel--</option>
-                            @foreach($rowsNiveles as $v)
-                                <option value="{{ $v->id }}" @selected(old('idniveles') == $v->id)>{{ $v->nivel }}</option>
-                            @endforeach
-                        </select>
-                    </div>
                     
                     <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Nombre del plan:</label>
-                        <input type="text" name="nombre" value="{{ old('nombre') }}" class="form-control" placeholder="Escribe el nombre del plan" required>
+                        <label class="form-label fw-bold ses-text-muted">Nombre del nivel:</label>
+                        <input type="text" name="descripcion" value="{{ old('descripcion') }}" class="form-control" placeholder="Escribe el nombre del nivel" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Precio:</label>
-                        <input type="text" name="precio" value="{{ old('precio') }}" class="form-control" placeholder="Ejemplo: 250.00" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Visitas máximas incluidas (Max. 30):</label>
-                        <input type="number" name="max_visitas_mes" value="{{ old('max_visitas_mes') }}" class="form-control" placeholder="Número de visitas permitidas" required>
+                        <label class="form-label fw-bold ses-text-muted">Aforo máximo:</label>
+                        <input type="text" name="aforo_maximo" value="{{ old('aforo_maximo') }}" class="form-control" placeholder="Aforo máximo" required>
                     </div>
 
                     <div class="mt-3 text-center">
@@ -76,12 +62,5 @@
        
 
 </main>
-@section('plugins.Select2', true)
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-      if (window.jQuery && $.fn.select2) {
-        $('.js-select2').select2();
-      }
-    });
-</script>
+
 @stop

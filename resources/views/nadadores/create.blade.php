@@ -1,10 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-
-
-
-<main class="row">
+<main class="row mb-6">
   <div class="col-12">
     <div class="page-header">
       <div class="page-title">
@@ -17,33 +14,52 @@
               <li class="breadcrumb-item">
                   <a href="{{ route($pageModule.'.index') }}" class="text-decoration-none"><i>{{ $pageTitle }}</i></a>    
               </li>
-              <li class="breadcrumb-item active"><i class="ses-text-muted">Agregar</i></li>
+              <li class="breadcrumb-item active"><i class="ses-text-muted">Agregar nuevo alumno</i></li>
           </ol>
       </nav>
     </div>
+
+    <div class="row">
+      <div class="col-12">
+        <a href="{{ route($pageModule.'.index', ['page' => request()->page]) }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+            <i class="fa fa-arrow-left me-1"></i> Regresar
+        </a>
+      </div>
+    </div>
+  
   
     <form action="{{ route($pageModule.'.store') }}" method="POST">
        @csrf
-    <div class="container mt-3">
+    <div class="row mt-2">
 
-        <div class="col-12">
+      <div class="col-8">
             <div class="sbox">
               <div class="sbox-title ses-text-muted">
-                  <h5><i class="fa fa-table"></i> <strong> Agregar nuevo Nadador</strong></h5>
+                  <h5><i class="fa fa-table"></i> <strong> Datos Alumno</strong></h5>
               </div>
               <div class="sbox-content"> 
 
-                  <div class="mb-3">
-                    <label class="form-label fw-bold ses-text-muted">Nombre del Nadador:</label>
-                    <input type="text" name="nombre" value="{{ old('nombre') }}" class="form-control" placeholder="Ingresa nombre completo" required>
+                  <div class="row">
+                    <div class="col-8">
+                      <div class="mb-3">
+                        <label class="form-label fw-bold ses-text-muted">Nombre completo:</label>
+                        <input type="text" name="nombre" value="{{ old('nombre') }}" class="form-control" placeholder="Ingresa nombre completo" required>
+                      </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mb-3">
+                          <label class="form-label fw-bold ses-text-muted">CURP:</label>
+                          <input type="text" name="curp" value="{{ old('curp') }}" class="form-control" placeholder="Ingresa CURP - 18 dígitos" required>
+                        </div>
+                    </div>
                   </div>
                    
                   <div class="row">
                     <div class="col-8">
-                      <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">CURP:</label>
-                        <input type="text" name="curp" value="{{ old('curp') }}" class="form-control" placeholder="Ingresa CURP - 18 dígitos" required>
-                      </div>
+                        <div class="mb-3">
+                          <label class="form-label fw-bold ses-text-muted">Teléfono de emergencia:</label>
+                          <input type="text" name="telefono_emergencia" value="{{ old('telefono_emergencia') }}" class="form-control" placeholder="Ingresa teléfono de emergencia" required>
+                        </div>
                     </div>
                     
                     <div class="col-4">
@@ -57,13 +73,13 @@
                   <div class="row">
                     <div class="col-6">
                       <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Edad del Nadador:</label>
+                        <label class="form-label fw-bold ses-text-muted">Edad:</label>
                         <input type="number" name="edad" value="{{ old('edad') }}" class="form-control" placeholder="Ingresa edad" required>
                       </div>
                     </div>
                     <div class="col-6">
                       <div class="mb-3">
-                        <label class="form-label fw-bold ses-text-muted">Género del Nadador:</label>
+                        <label class="form-label fw-bold ses-text-muted">Género:</label>
                         <select name="idgenero" class="form-control js-select2" required>
                           <option value="">--Select Please--</option>
                           @foreach($rowsGenero as $v)
@@ -76,7 +92,12 @@
 
                   <div class="mb-3">
                     <label class="form-label fw-bold ses-text-muted">Domicilio (calle, número y colonia o datos de referencia):</label>
-                    <input type="text" name="domicilio" value="{{ old('domicilio') }}" class="form-control" placeholder="Ingresa domicilio" required>
+                    <textarea name="domicilio" cols="3" rows="3" class="form-control" placeholder="Ingresa domicilio" required>{{ old('domicilio') }}</textarea>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-bold ses-text-muted">Comentarios adicionales:</label>
+                    <textarea name="comentarios" cols="3" rows="3" class="form-control" placeholder="Ingresa domicilio">{{ old('comentarios') }}</textarea>
                   </div>
 
               </div>
@@ -84,70 +105,77 @@
 
           <div class="sbox">
             <div class="sbox-title ses-text-muted">
-                <h5><i class="fa fa-table"></i> <strong> Datos titular responsable del nadador</strong></h5>
+                <h5><i class="fa fa-table"></i> <strong> Datos titular responsable del alumno</strong></h5>
             </div>
             <div class="sbox-content"> 
-                <div class="mb-3">
-                  <label class="form-label fw-bold ses-text-muted">Nombre completo:</label>
-                  <input type="text" name="titular_nombre" value="{{ old('titular_nombre') }}" class="form-control" placeholder="Ingresa nombre completo" required>
+                <div class="row">
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold ses-text-muted">Nombre completo:</label>
+                      <input type="text" name="titular_nombre" value="{{ old('titular_nombre') }}" class="form-control" placeholder="Ingresa nombre completo" required>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold ses-text-muted">Parentesco:</label>
+                       <select name="idparentesco" class="form-control js-select2" required>
+                        <option value="">--Selecciona el parentesco--</option>
+                        @foreach($rowsParentesco as $v)
+                          <option value="{{ $v->id }}" @selected(old('idparentesco') == $v->id)>{{ $v->parentesco }}</option>
+                        @endforeach
+                      </select>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="mb-3">
-                  <label class="form-label fw-bold ses-text-muted">Teléfono:</label>
-                  <input type="text" name="titular_telefono" value="{{ old('titular_telefono') }}" class="form-control" placeholder="Ingresa teléfono" required>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold ses-text-muted">Correo Electrónico:</label>
-                  <input type="text" name="titular_email" value="{{ old('titular_email') }}" class="form-control" placeholder="Ingresa correo electrónico" required>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold ses-text-muted">Domicilio:</label>
-                  <input type="text" name="titular_domicilio" value="{{ old('titular_domicilio') }}" class="form-control" placeholder="Ingresa domicilio" required>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label fw-bold ses-text-muted">Parentesco:</label>
-                  <select name="idparentesco" class="form-control js-select2" required>
-                    <option value="">--Selecciona el parentesco--</option>
-                    @foreach($rowsParentesco as $v)
-                      <option value="{{ $v->id }}" @selected(old('idparentesco') == $v->id)>{{ $v->parentesco }}</option>
-                    @endforeach
-                  </select>
+                <div class="row">
+                  <div class="col-6">
+                      <div class="mb-3">
+                        <label class="form-label fw-bold ses-text-muted">Teléfono:</label>
+                        <input type="text" name="titular_telefono" value="{{ old('titular_telefono') }}" class="form-control" placeholder="Ingresa teléfono" required>
+                      </div>
+                  </div>
+                  <div class="col-6">
+                      <div class="mb-3">
+                        <label class="form-label fw-bold ses-text-muted">Correo Electrónico:</label>
+                        <input type="text" name="titular_email" value="{{ old('titular_email') }}" class="form-control" placeholder="Ingresa correo electrónico" required>
+                      </div>
+                  </div>
                 </div>
 
             </div>
           </div>
+      </div>
+      <div class="col-4">
 
-          <div class="sbox mb-3">
+        <div class="sbox mb-3">
             <div class="sbox-title ses-text-muted">
-                <h5><i class="fa fa-table"></i> <strong> Nivel Nadador</strong></h5>
+                <h5><i class="fa fa-table"></i> <strong> Nivel Alumno</strong></h5>
             </div>
             <div class="sbox-content"> 
                  
               <div class="mb-3">
-                <label class="form-label fw-bold ses-text-muted">Nivel del nadador:</label>
+                <label class="form-label fw-bold ses-text-muted">Plan del alumno:</label>
                 <select name="idplan" class="form-control js-select2" required>
-                  <option value="">--Selecciona el nivel del nadador--</option>
+                  <option value="">--Selecciona el nivel del alumno--</option>
                   @foreach($rowsPlan as $v)
-                    <option value="{{ $v->id }}" @selected(old('idplan') == $v->id)>{{ $v->plan.' ['.$v->descripcion.']'.' - Total de visitas: '.$v->max_visitas_mes.' - Precio: $'.$v->precio }}</option>
+                    <option value="{{ $v->id }}" @selected(old('idplan') == $v->id)>{{ $v->nivel.' ('.$v->plan.') - Total de visitas al mes: '.$v->max_visitas_mes.' - Precio: $'.$v->precio }}</option>
                   @endforeach
                 </select>
               </div>
 
-              <div class="mt-3 text-center">
-                <button type="button"
-                    onclick="location.href='{{ route($pageModule.'.index') }}'" class="btn btn-sm btn-white">
-                    <i class="fa fa-arrow-circle-left"></i> Cancelar
-                  </button>
-                <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="fa fa-save"></i> Guardar</button>
+              <div class="row mt-4 text-center">
+                <div class="col-12">
+                  <button type="submit" name="save" class="btn btn-sm btn-primary ses-text-white"><i class="fa fa-save"></i> Guardar</button>
+                </div>
               </div>
               
             </div>
-          </div>
-
         </div>
+
+      </div>
+
+
     </div>
         </form>
   </div>

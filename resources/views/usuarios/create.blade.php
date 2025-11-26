@@ -2,9 +2,7 @@
 
 @section('content')
 
-
-
-<main class="row">
+<main class="container">
   <div class="col-12">
     <div class="page-header">
       <div class="page-title">
@@ -24,7 +22,7 @@
   
     <form action="{{ route($pageModule.'.store') }}" method="POST">
        @csrf
-      <div class="container mt-3">
+      <div class="row mt-3">
           <div class="col-12">
               <div class="sbox">
                 <div class="sbox-title ses-text-muted">

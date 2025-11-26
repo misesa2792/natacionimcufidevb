@@ -14,12 +14,21 @@ class Suscripciones extends Model
 	protected $fillable = [
         'idnadador',
         'idplan',
+        'idyear',
+        'idmes',
+        'idplan',
+        'fecha_pago',
+        'hora_pago',
         'fecha_inicio',
         'fecha_fin',
         'active',
         'idtipo_pago',
-        'monto',
-        'max_visitas_mes'
+        'max_visitas_mes',
+        'monto_general',
+        'monto_pagado',
+        'descuento',
+        'desc_descuento',
+        'porc_descuento',
     ];
 
 	public $timestamps = false;
@@ -29,13 +38,15 @@ class Suscripciones extends Model
 		$perPage = $request['nopagina']; // default
 
 		$query = DB::table('ses_nadador as n')
-			->join('ses_plan as p', 'p.idplan', '=', 'n.idplan')
+			->leftjoin('ses_plan as p', 'p.idplan', '=', 'n.idplan')
+				->leftjoin('ses_niveles as s', 's.idniveles', '=', 'p.idniveles')
 			->select([
 				'n.idnadador as id',
 				'n.active',
 				'n.nombre',
 				'n.curp',
-				'p.nombre as plan'
+				'p.nombre as plan',
+				's.descripcion as nivel'
 			])
 			->orderBy('n.nombre', 'asc');
 		// Filtros opcionales (ejemplo)
@@ -45,7 +56,15 @@ class Suscripciones extends Model
 		}
 		return $query->paginate($perPage)->appends($request);
 	}
-	public static function suscripcionID($id)
+	public function pagosPorMes($idalumno, $idyear)
+	{
+		return DB::table('ses_suscripcion')
+			->where('idnadador', $idalumno)
+			->where('idyear', $idyear)
+			->select('idsuscripcion as id','idmes', 'idtipo_pago')
+			->get();
+	}
+	/*public static function suscripcionID($id)
 	{
 		return DB::table('ses_suscripcion as s')
 		->join('ses_plan as p', 'p.idplan', '=', 's.idplan')
@@ -70,7 +89,7 @@ class Suscripciones extends Model
 		->orderBy('s.idsuscripcion', 'DESC')
 		->limit(1)
 		->first();
-	}
+	}*/
 	public static function suscripcionesNadador($id, $limit = 3)
 	{
 		return DB::table('ses_suscripcion as s')
@@ -82,7 +101,7 @@ class Suscripciones extends Model
 				's.fecha_inicio as fi',
 				's.fecha_fin as ff',
 				'tp.descripcion as pago',
-				's.monto',
+				's.monto_pagado as monto',
 				's.max_visitas_mes',
 				DB::raw("
 					CASE 
@@ -101,6 +120,7 @@ class Suscripciones extends Model
 	{
 		return DB::table('ses_nadador as n')
 				->join('ses_plan as pl', 'pl.idplan', '=', 'n.idplan')
+					->join('ses_niveles as ni', 'ni.idniveles', '=', 'pl.idniveles')
 				->join('ses_genero as g', 'g.idgenero', '=', 'n.idgenero')
 				->join('ses_parentesco as pa', 'pa.idparentesco', '=', 'n.idparentesco')
 				->select([
@@ -113,6 +133,9 @@ class Suscripciones extends Model
 					'n.edad',
 					'pl.nombre as plan',
 					'pl.idplan',
+					'pl.idniveles',
+					'ni.descripcion as nivel',
+					'ni.aforo_maximo',
 					'pl.precio',
 					'pl.duracion_dias',
 					'pl.max_visitas_mes',
@@ -164,6 +187,29 @@ class Suscripciones extends Model
 			])
 			->get();
 	}*/
+	public static function horariosNiveles($id)
+	{
+		return DB::table('ses_plan_horario')
+            ->select('idplan_horario','dia_semana', 'time_start')
+            ->where('idniveles', $id)
+            ->orderBy('time_start')
+            ->get()
+            ->groupBy('dia_semana');
+	}
+	public static function fechasTemporales($id, $time)
+	{
+		return DB::table('ses_reserva_alt')
+            ->select('fecha','idplan_horario')
+            ->where('idnadador', $id)
+            ->where('time', $time)
+            ->get();
+	}
+	public static function descuentos()
+	{
+		return DB::table('ses_descuento')
+            ->select('iddescuento as id','descripcion','descuento')
+            ->get();
+	}
 	public static function totalReservasPorFecha($id, $fecha)
 	{
 		return DB::table('ses_reserva')
@@ -237,17 +283,26 @@ class Suscripciones extends Model
 		$row = DB::table('ses_suscripcion as s')
 			->join('ses_nadador as n', 'n.idnadador', '=', 's.idnadador')
 			->join('ses_plan as p', 'p.idplan', '=', 's.idplan')
-			->join('ses_tipo_pago as tp', 'tp.idtipo_pago', '=', 's.idtipo_pago')
+				->join('ses_niveles as ni', 'ni.idniveles', '=', 'p.idniveles')
+			->leftjoin('ses_year as y', 'y.idyear', '=', 's.idyear')
+			->leftjoin('ses_mes as me', 'me.idmes', '=', 's.idmes')
+			->leftjoin('ses_tipo_pago as tp', 'tp.idtipo_pago', '=', 's.idtipo_pago')
 			->select([
 				's.idsuscripcion as id',
 				'n.nombre',
 				'n.curp',
 				's.fecha_inicio as fi',
 				's.fecha_fin as ff',
-				's.monto',
+				's.monto_pagado as monto',
 				'p.nombre as plan',
 				'tp.descripcion as pago',
 				's.max_visitas_mes',
+				'ni.descripcion as nivel',
+				'me.mes',
+				'y.numero as year',
+				's.monto_general',
+				's.monto_pagado',
+				's.descuento',
 				DB::raw("
 					CASE 
 						WHEN CURDATE() BETWEEN s.fecha_inicio AND s.fecha_fin 
@@ -263,6 +318,21 @@ class Suscripciones extends Model
 			$row->ff_formateada = Carbon::parse($row->ff)->isoFormat('DD [de] MMMM [de] YYYY');
 		}
 		return $row;
+	}
+	public static function listSuscripcionesDia($id, $fecha)
+	{
+		return DB::table('ses_reserva as r')
+		->join('ses_suscripcion as s', 's.idsuscripcion', '=', 'r.idsuscripcion')
+		->join('ses_nadador as n', 'n.idnadador', '=', 's.idnadador')
+		->where('r.idplan_horario', $id)
+		->where('r.fecha', $fecha)
+		->select(
+			'r.idreserva as id',
+			'n.nombre as alumno',
+			'r.fecha',
+			'r.active'
+		)
+		->get();
 	}
     
 }
