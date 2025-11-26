@@ -67,11 +67,11 @@
                     </div>
 
                     <a href="{{ route($pageModule.'.pdf', ['ids' => $ids]) }}" target="_blank" class="btn btn-outline-primary btn-md px-4">
-                        <i class="bi bi-cash-coin"></i> Imprimir Orden de Pago
+                        <i class="bi bi-printer"></i> Imprimir Orden de Pago
                     </a>
 
                     <div class="mt-6">
-                        <a href="{{ route($pageModule.'.index') }}">
+                        <a href="{{ route($pageModule.'.index',['page' => request()->page]) }}">
                             &laquo; Regresar a la página principal
                         </a>
                     </div>

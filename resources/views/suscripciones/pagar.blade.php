@@ -24,7 +24,7 @@
 
     <div class="row">
       <div class="col-12">
-        <a href="{{ route($pageModule.'.index') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+        <a href="{{ route($pageModule.'.index',['page' => request()->page]) }}" class="btn btn-sm btn-outline-secondary rounded-pill">
             <i class="fa fa-arrow-left me-1"></i> Regresar
         </a>
       </div>
@@ -84,7 +84,7 @@
               </div>
               <div class="sbox-content"> 
 
-                <form action="{{ route($pageModule.'.ticket',['id' => $id, 'idm' => $idm, 'idy' => $idy, 'time' => $time]) }}" method="POST">
+                <form action="{{ route($pageModule.'.ticket',['id' => $id, 'idm' => $idm, 'idy' => $idy, 'time' => $time,'page' => request()->page]) }}" method="POST">
                 @csrf
                   <div class="mb-3">
                     <div class="row">
@@ -134,7 +134,7 @@
                   
 
                 <div class="mt-3 text-center">
-                  <button type="submit" name="save" class="btn btn-sm btn-primary rounded-pill"><i class="bi bi-cash-coin"></i> Guardar Pago </button>
+                  <button type="submit" name="save" class="btn btn-md btn-primary rounded-pill ses-text-white"><i class="bi bi-cash-coin"></i> Guardar Pago </button>
                 </div>
             </form>
 

@@ -64,8 +64,16 @@ class Suscripciones extends Model
 		return DB::table('ses_suscripcion')
 			->where('idnadador', $idalumno)
 			->where('idyear', $idyear)
-			->select('idsuscripcion as id','idmes', 'idtipo_pago')
+			->select('idsuscripcion as id','idmes', 'idtipo_pago','active')
 			->get();
+	}
+	public function validarSuscripcion($idn, $idy, $idm)
+	{
+		return DB::table('ses_suscripcion')
+				->where('idnadador', $idn)
+				->where('idyear', $idy)
+				->where('idmes', $idm)
+				->count();
 	}
 	/*public static function suscripcionID($id)
 	{
@@ -305,6 +313,7 @@ class Suscripciones extends Model
 				'tp.descripcion as pago',
 				's.max_visitas_mes',
 				'ni.descripcion as nivel',
+				's.idmes',
 				'me.mes',
 				'y.numero as year',
 				's.monto_general',
@@ -338,6 +347,15 @@ class Suscripciones extends Model
 			'n.nombre as alumno',
 			'r.fecha',
 			'r.active'
+		)
+		->get();
+	}
+	public static function evidenciaIMGs($id)
+	{
+		return DB::table('ses_suscripcion_img')
+		->where('idsuscripcion', $id)
+		->select(
+			'url'
 		)
 		->get();
 	}

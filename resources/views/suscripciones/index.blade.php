@@ -106,13 +106,13 @@
                                                 @if($isPastMonth)
                                                     {{-- Mes pasado del año actual: solo consulta, no permite pagar --}}
                                                     @if($pagado)
-                                                         <a href=""
-                                                        class="ses-pill ses-pill-paid text-decoration-none"
+                                                         <a href="{{ route($pageModule . '.detail', ['ids' => $v['rowsPagos'][$idmes]['id'], 'page' => request()->page ]) }}"
+                                                            class="ses-pill ses-pill-past text-decoration-none"
                                                         target="_blank">
-                                                            <i class="bi bi-cash-coin me-1"></i> Pagado
+                                                            <i class="bi bi-pencil-fill"></i> Registrado
                                                         </a>
                                                     @else
-                                                        <span class="ses-pill ses-pill-past" title="No se puede pagar meses anteriores">
+                                                        <span class="ses-pill ses-pill-gray" title="No se puede pagar meses anteriores">
                                                             <i class="bi bi-lock-fill me-1"></i> Cerrado
                                                         </span>
                                                     @endif
@@ -120,13 +120,23 @@
                                                 @else
                                                     {{-- Mes actual o futuro: aquí sí permites pago / ver pago --}}
                                                     @if($pagado)
-                                                        <a href="{{ route($pageModule . '.detail', ['ids' => $v['rowsPagos'][$idmes]['id'] ]) }}"
-                                                        class="ses-pill ses-pill-paid text-decoration-none">
+
+                                                        @if($v['rowsPagos'][$idmes]['active'] == 2)
+                                                            <a href="{{ route($pageModule . '.detail', ['ids' => $v['rowsPagos'][$idmes]['id'], 'page' => request()->page ]) }}"
+                                                            class="ses-pill ses-pill-past text-decoration-none">
+                                                            <i class="bi bi-pencil-fill"></i> Registrado
+                                                            </a>
+                                                        @else 
+                                                            <a href="{{ route($pageModule . '.detail', ['ids' => $v['rowsPagos'][$idmes]['id'], 'page' => request()->page ]) }}"
+                                                            class="ses-pill ses-pill-paid text-decoration-none">
                                                             <i class="bi bi-cash-coin me-1"></i> Pagado
-                                                        </a>
+                                                            </a>
+                                                        @endif
+
+                                                        
                                                     @else
                                                         @if(!empty($v['plan']))
-                                                            <a href="{{ route($pageModule . '.view', ['id' => $v['id'], 'idy' => $idyear, 'idm' => $idmes ]) }}"
+                                                            <a href="{{ route($pageModule . '.view', ['id' => $v['id'], 'idy' => $idyear, 'idm' => $idmes, 'page' => request()->page ]) }}"
                                                             class="ses-pill ses-pill-pending text-decoration-none">
                                                                 <i class="bi bi-plus-circle me-1"></i> Pagar
                                                             </a>
@@ -184,6 +194,12 @@
         font-size: 0.70rem;
         font-weight: 600;
         white-space: nowrap;
+    }
+
+    .ses-pill-gray {
+         background-color: #f2f2f2;
+        color: #6c757d;
+        border: 1px solid #d6d6d6;
     }
 
     .ses-pill-paid {

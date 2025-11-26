@@ -44,6 +44,7 @@
         Route::post('/ticket', 'ticket')->name('ticket');
         Route::get('/ordenpago', 'ordenpago')->name('ordenpago');
         Route::get('/detail', 'detail')->name('detail');
+        Route::post('/upload', 'upload')->name('upload');
     });
 
     Route::controller(NivelesController::class)->prefix('niveles')->name('niveles.')->group(function () {

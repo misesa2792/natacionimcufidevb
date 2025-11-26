@@ -1,7 +1,7 @@
 <x-guest-layout>
     <!-- Session Status -->
     <div class="row">
-            <img src="{{ asset('storage/imcufide.png') }}" alt="Logo">
+            <img src="{{ asset('mass/images/logo/imcufide.png') }}" alt="Logo">
     </div>
         <br>
         <br>

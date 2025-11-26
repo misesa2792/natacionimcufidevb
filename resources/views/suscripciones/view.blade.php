@@ -24,7 +24,7 @@
 
     <div class="row">
       <div class="col-12">
-        <a href="{{ route($pageModule.'.index') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+        <a href="{{ route($pageModule.'.index',['page' => request()->page]) }}" class="btn btn-sm btn-outline-secondary rounded-pill">
             <i class="fa fa-arrow-left me-1"></i> Regresar
         </a>
       </div>
@@ -73,7 +73,7 @@
         <div class="col-12">
 
 
-<form action="{{ route($pageModule.'.temporal',['id' => $id, 'idm' => $idm, 'idy' => $idy]) }}" method="POST">
+<form action="{{ route($pageModule.'.temporal',['id' => $id, 'idm' => $idm, 'idy' => $idy,'page' => request()->page]) }}" method="POST">
 @csrf
   <main class="row">
     <div class="col-12">

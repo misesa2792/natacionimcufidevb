@@ -7,6 +7,7 @@ use App\Models\Reserva;
 use App\Models\Descuento;
 use App\Models\Reservatemporal;
 use App\Models\Year;
+use App\Models\Suscripcionesfiles;
 
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -70,11 +71,14 @@ class SuscripcionesController extends Controller
     private function dataPagosAlumno($id, $idyear){
 		$meses = [];
 		foreach ($this->model->pagosPorMes($id, $idyear) as $r) {
-			$meses[$r->idmes] = ['id' => $r->id, 'idtipo_pago' => $r->idtipo_pago];
+			$meses[$r->idmes] = ['id'           => $r->id, 
+                                'idtipo_pago'   => $r->idtipo_pago,
+                                'active'        => $r->active
+                            ];
 		}
 		return $meses;
     }
-    public function view(Request $request): View
+    public function view(Request $request)
     {
         $row = $this->model->nadadorID($request->id);
         if($row){
@@ -216,6 +220,7 @@ class SuscripcionesController extends Controller
         $this->data['folio'] = $this->folio($request->ids);
         $this->data['row'] = $this->model->suscripcionDataID($request->ids);
         $this->data['rowsFechas'] = $this->model->listRegistros($request->ids);
+        $this->data['rowsImgs'] = $this->model->evidenciaIMGs($request->ids);
         return view($this->module.'.detail',$this->data);
     }
     public function pdf(Request $request)
@@ -287,7 +292,7 @@ class SuscripcionesController extends Controller
             );
         }
         return redirect()
-            ->route($this->module.'.pagar', ['id' => $request->id, 'idm' => $request->idm, 'idy' => $request->idy, 'time' => $time])
+            ->route($this->module.'.pagar', ['id' => $request->id, 'idm' => $request->idm, 'idy' => $request->idy, 'time' => $time, 'page' => $request->page])
             ->with('messagetext','Horario seleccionado correctamente, procede a realziar el pago.')
             ->with('msgstatus','success');
     }
@@ -311,6 +316,13 @@ class SuscripcionesController extends Controller
         return ($precio * ($descuento / 100));
     }
     public function ticket(Request $request){
+
+        $validated = $this->model->validarSuscripcion($request->id, $request->idy, $request->idm);
+        if($validated > 0){
+            return back()
+                    ->withErrors('El alumno ya tiene una suscripción activa registrada para el mes seleccionado.');
+        }
+
         $row = $this->model->nadadorID($request->id);
         
         $descuento = Descuento::find($request->iddescuento);
@@ -333,7 +345,7 @@ class SuscripcionesController extends Controller
                         'hora_pago'             => Carbon::now()->format('H:i:s'),
                         'fecha_inicio'          => $fecha,
                         'fecha_fin'             => $fecha,
-                        'active'                => 1,
+                        'active'                => 2,
                         'idtipo_pago'           => $request->idtipo_pago,
                         'max_visitas_mes'       => $row->max_visitas_mes,
                         'monto_general'         => $row->precio,
@@ -353,7 +365,7 @@ class SuscripcionesController extends Controller
             );
         }
         return redirect()
-            ->route($this->module.'.ordenpago', ['ids' => $suscripcion->idsuscripcion])
+            ->route($this->module.'.ordenpago', ['ids' => $suscripcion->idsuscripcion,'page' => $request->page])
             ->with('messagetext','Suscripción realizada correctamente.')
             ->with('msgstatus','success');
     }
@@ -402,6 +414,53 @@ class SuscripcionesController extends Controller
             ->with('messagetext','Información guardada correctamente')
             ->with('msgstatus','success');
     }
+    
+    public function upload(Request $request)
+    {
+        // Validación básica
+        $request->validate([
+            'documento' => 'required|image|max:5120', // 5MB
+        ]);
+        $row = $this->model->suscripcionDataID($request->ids);
+        // genera nombre personalizado
+        $filename = $this->buildFilename('VB', $request->ids);
+        // extensión real
+        $ext = $request->file('documento')->getClientOriginalExtension();
+        // nombre final + extensión
+        $filenameFull = $filename . '.' . $ext;
+        // Guardar archivo en storage/app/public/uploads
+        $directory = "pagos/{$row->year}/{$row->idmes}/{$request->ids}/";
+        // guarda archivo con tu nombre personalizado
+        $path = $request->file('documento')->storeAs(
+            $directory,   // carpeta
+            $filenameFull,
+            'public'     // disco
+        );
+        Suscripcionesfiles::create(['idsuscripcion' => $request->ids, 'url' =>  $directory.$filenameFull]);
+        //cambiamos a pagado
+        $suscripcion = $this->model->find($request->ids);
+        $suscripcion->update(['active' => 1]);
+
+        return redirect()
+            ->route($this->module.'.detail', ['ids' => $request->ids, 'page' => $request->page])
+            ->with('messagetext','Evidencia subida correctamente.')
+            ->with('msgstatus','success');
+    }
+    private function buildFilename($abreviatura = 'VB', $id){
+		/*Se constuye el nombre del archivo:
+			VB 1214 12863 0024 0000000001
+			VB 		    = Abreviatura
+			0921 		= Mes y Día que se genero el PDF
+			00660  		= 5 digitos aleatorios
+			0024 		= 2 digitos del año con 2 ceros a la izquierda
+			0000000004 	= ID de la tabla del PDF, siempre se debe de cumplir 10 digitos
+		*/
+		$filename = $abreviatura.date('md').$this->addCerosLEFT(rand(0, 99999), 5)."00".date('y').$this->addCerosLEFT($id,10);
+		return $filename;
+	}
+    private function addCerosLEFT($numero, $longitud) {
+		return str_pad($numero, $longitud, '0', STR_PAD_LEFT);
+	}
     /* public function store(Request $request)
     {
         $row = Suscripciones::nadadorID($request->id);

@@ -82,7 +82,8 @@
                 icon: @json(session('msgstatus')),
                 title: @json(session('messagetext')),
                 showConfirmButton: false,
-                timer: 1500
+                timer: 2000,
+                toast: true,
             });
         </script>
     @endif
@@ -94,7 +95,8 @@
                 icon: "warning",
                 title: @json($error),
                 showConfirmButton: false,
-                timer: 1500
+                timer: 2000,
+                toast: true,
             });
         </script>
     @endforeach
