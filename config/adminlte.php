@@ -363,22 +363,22 @@ return [
         [
             'text'    => 'Pagos',
             'icon'    => 'bi bi-credit-card-fill',
-            'url' => 'suscripciones',
+            'url'    => 'suscripciones',
             'can'     => 'menu-suscripciones',
         ],
-      
+        [
+            'text'    => 'Control de Asistencia',
+            'icon'    => 'bi bi-journal-check',
+            'url'     => 'asistencias',
+            'can'     => 'menu-asistencias',
+        ],
+        
+    ['header' => 'Openpay BBVA'],
         [
             'text'    => 'Transacciones',
             'icon'    => 'bi bi-cash-coin',
-            'url' => 'transacciones',
+            'url'     => 'transacciones',
             'can'     => 'menu-transacciones',
-        ],
-    ['header' => 'Control de Asistencia'],
-        [
-            'text'    => 'Registrar',
-            'icon'    => 'bi bi-journal-check',
-            'url' => 'asistencias',
-            'can'     => 'menu-asistencias',
         ],
     ],
     

@@ -77,70 +77,104 @@
                         </div>
                     </form>
 
-
                     @if ($pagination->count())
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover table-sm align-middle mb-0 ses-table-pagos">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="text-center" width="40">#</th>
-                                        <th>Alumno</th>
-                                        <th>Plan</th>
-                                        <th class="text-center">Mensualidad</th>
-                                        <th class="text-center">Fecha pago</th>
-                                        <th class="text-center">Estatus</th>
-                                        <th class="text-center">Tipo de pago</th>
-                                        <th>Tipo de descuento</th>
-                                        <th>Descuento</th>
-                                        <th>Subtotal</th>
-                                        <th>Total</th>
-                                    </tr>
-                                </thead>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-sm align-middle mb-0 ses-table-pagos">
+                            <thead class="table-light">
+                                <tr class="text-muted text-uppercase small">
+                                    <th class="text-center" width="40">#</th>
+                                    <th>Alumno</th>
+                                    <th>Plan</th>
+                                    <th class="text-center">Mensualidad</th>
+                                    <th class="text-center">Fecha pago</th>
+                                    <th class="text-center">Estatus</th>
+                                    <th class="text-center">Tipo de pago</th>
+                                    <th>Tipo de descuento</th>
+                                    <th class="text-end text-right">Descuento</th>
+                                    <th class="text-end text-right">Subtotal</th>
+                                    <th class="text-end text-right">Total</th>
+                                </tr>
+                            </thead>
 
-                                <tbody>
-                                @foreach ($pagination as $v)
-                                    <tr>
-                                        <td class="text-center fw-bold">{{ ++$j }}</td>
-                                        <th class="text-dark">{{ $v->alumno }}</th>
-                                        <td>{{ $v->nivel }} <i>{{ $v->plan }}</i></td>
-                                        <td class="text-center">{{ $v->mes }}</td>
-                                        <td class="text-center">{{ $v->fecha_pago }}</td>
-                                        <td class="text-center">
-                                            @if($v->active == 1)
-                                                <span class="badge bg-success"><i class="bi bi-cash-stack"></i> Pagado</span>
-                                            @else 
-                                                <span class="badge bg-warning text-dark"><i class="bi bi-cash-stack"></i> Pendiente</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">{{ $v->tipo_pago }}</td>
-                                        <td>{{ $v->desc_descuento }} {{ $v->porc_descuento }}%</i></td>
-                                        <td class="text-right">${{ $v->descuento }}</td>
-                                        <td class="text-right">${{ $v->monto_general }}</td>
-                                        <th class="text-right text-dark">${{ $v->monto_pagado }}</th>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="border rounded text-center text-muted py-5">
-                            <p class="mb-3">No hay registros para mostrar.</p>
-                        </div>
-                    @endif
+                            <tbody>
+                            @foreach ($pagination as $v)
+                                @php
+                                    $rowClass = $v->active == 1 ? 'sus-row-paid' : 'sus-row-pending';
+                                @endphp
+                                <tr class="{{ $rowClass }}">
+                                    <td class="text-center fw-semibold">{{ ++$j }}</td>
+                                    <td class="fw-semibold text-dark">{{ $v->alumno }}</td>
+                                    <td class="text-muted">
+                                        {{ $v->nivel }}
+                                        <div><em class="text-gray-600">{{ $v->plan }}</em></div>
+                                    </td>
+                                    <td class="text-center">{{ $v->mes }}</td>
+                                    <td class="text-center">{{ $v->fecha_pago }}</td>
+                                    <td class="text-center">
+                                        @if($v->active == 1)
+                                            <span class="badge rounded-pill bg-success ses-badge-soft">
+                                                <i class="bi bi-cash-stack me-1"></i> Pagado
+                                            </span>
+                                        @else 
+                                            <span class="badge rounded-pill bg-warning text-dark ses-badge-soft">
+                                                <i class="bi bi-hourglass-split me-1"></i> Pendiente
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">{{ $v->tipo_pago }}</td>
+                                    <td class="text-muted">{{ $v->desc_descuento }} {{ $v->porc_descuento }}%</td>
+                                    <td class="text-end text-right small text-danger">${{ number_format($v->descuento, 2) }}</td>
+                                    <td class="text-end text-right small">${{ number_format($v->monto_general, 2) }}</td>
+                                    <td class="text-end text-right fw-bold text-dark">${{ number_format($v->monto_pagado, 2) }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="border rounded text-center text-muted py-5">
+                        <p class="mb-3">No hay registros para mostrar.</p>
+                    </div>
+                @endif
 
-
-                </div>
-
-                 <div class="row mt-3">
+                <div class="row mt-3">
                     <div class="col-12 text-right">
                         {{ $pagination->appends(request()->query())->onEachSide(2)->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
                 
+
+                </div>
+
+               
             </div>
 
 
 
         </div>
     </main>
+
+<style>
+.ses-table-pagos tbody tr:hover {
+    background-color: #f9fbff;
+}
+/* Fila pagada / pendiente */
+.sus-row-paid {
+    background-color: #f5fff7;
+}
+.sus-row-pending {
+    background-color: #fff9e6;
+}
+/* Suavizar badges de estatus */
+.ses-badge-soft {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.70rem;
+}
+/* Opcional: bordes redondeados a la tabla */
+.ses-table-pagos {
+    border-radius: 10px;
+    overflow: hidden;
+}
+</style>
+
 @stop
