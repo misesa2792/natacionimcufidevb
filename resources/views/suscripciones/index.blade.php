@@ -29,7 +29,10 @@
                         <i class="bi bi-cash-coin"></i> Registrar pagos
                     </a>
                     <a href="{{ route($pageModule.'.reportepagos') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
-                        <i class="bi bi-wallet2"></i> Reporte pagos
+                        <i class="bi bi-bar-chart-line-fill"></i> Gráfica de pagos
+                    </a>
+                    <a href="{{ route($pageModule.'.historialpagos') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                        <i class="bi bi-cash-stack"></i> Historial de pagos
                     </a>
                 </div>
             </div>

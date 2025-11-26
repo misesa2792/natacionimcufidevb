@@ -70,9 +70,23 @@ class SuscripcionesController extends Controller
     }
     public function reportepagos(Request $request)
     {
-        $this->data['year'] = 2025;
         $this->data['idyear'] = 1;
         return view($this->module.'.reporte.index',$this->data);
+    }
+    public function historialpagos(Request $request)
+    {
+        $nopage = $request->integer('nopagina', static::$perpage);
+        $page = $request->integer('page', 1);
+
+        $idyear = 1;
+
+        $request['nopagina'] = $nopage;
+        $request['idyear'] = $idyear;
+        $this->data['idyear'] = $idyear;
+        $rows =  $this->model->listHistorialPagos($request->all());
+        $this->data['j'] = ($page * $nopage) - $nopage;
+        $this->data['pagination'] = $rows;
+        return view($this->module.'.historial.index',$this->data);
     }
     private function dataPagosAlumno($id, $idyear){
 		$meses = [];

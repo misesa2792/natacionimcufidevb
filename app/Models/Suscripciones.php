@@ -59,6 +59,38 @@ class Suscripciones extends Model
 		}
 		return $query->paginate($perPage)->appends($request);
 	}
+	public static function listHistorialPagos($request)
+	{
+		$perPage = $request['nopagina']; // default
+
+		$query = DB::table('ses_suscripcion as s')
+			->join('ses_mes as m', 'm.idmes', '=', 's.idmes')
+			->leftjoin('ses_plan as p', 'p.idplan', '=', 's.idplan')
+				->leftjoin('ses_niveles as ni', 'ni.idniveles', '=', 'p.idniveles')
+			->join('ses_nadador as n', 'n.idnadador', '=', 's.idnadador')
+			->join('ses_tipo_pago as tp', 'tp.idtipo_pago', '=', 's.idtipo_pago')
+			->select([
+				's.idsuscripcion as id',
+				's.active',
+				'm.mes',
+				 DB::raw("DATE_FORMAT(s.fecha_pago, '%e de %M del %Y') as fecha_pago"),
+				'n.nombre as alumno',
+				'p.nombre as plan',
+				'ni.descripcion as nivel',
+				'tp.descripcion as tipo_pago',
+				's.monto_general',
+				's.monto_pagado',
+				's.descuento',
+				's.porc_descuento',
+				's.desc_descuento'
+			])
+			->where('s.idyear', $request['idyear'])
+			->orderBy('s.fecha_pago', 'desc');
+		if (!empty($request['nombre']) && trim($request['nombre']) !== '') {
+			$query->where('n.nombre', 'like', '%'.trim($request['nombre']).'%');
+		}
+		return $query->paginate($perPage)->appends($request);
+	}
 	public function pagosPorMes($idalumno, $idyear)
 	{
 		return DB::table('ses_suscripcion')

@@ -46,6 +46,7 @@
         Route::get('/detail', 'detail')->name('detail');
         Route::post('/upload', 'upload')->name('upload');
         Route::get('/reportepagos', 'reportepagos')->name('reportepagos');
+        Route::get('/historialpagos', 'historialpagos')->name('historialpagos');
         Route::get('/dashboard', 'dashboard')->name('dashboard');
     });
 
