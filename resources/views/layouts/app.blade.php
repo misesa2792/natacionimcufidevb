@@ -5,6 +5,11 @@
 
 @section('meta_tags')
     <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <meta property="og:title" content="IMCUFIDE Valle de Bravo - Natación">
+    <meta property="og:description" content="Sistema de control de suscripciones y pagos de natación del IMCUFIDE Valle de Bravo.">
+    <meta property="og:image" content="{{ asset('mass/images/logo/icon.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
 @stop
 
 {{-- Encabezado de contenido (aparece bajo el header) 

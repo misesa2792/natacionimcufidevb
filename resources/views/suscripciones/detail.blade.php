@@ -61,10 +61,10 @@
             <div class="sbox">
               <div class="sbox-title ses-text-muted">
                   <div class="row">
-                      <div class="col-9">
+                      <div class="col-7">
                           <h5><i class="fa fa-table"></i> <strong> Detalle de la mensualidad</strong></h5>
                       </div>
-                      <div class="col-3 text-right">
+                      <div class="col-5 text-right">
                         <a href="{{ route($pageModule.'.pdf', ['ids' => $ids]) }}" target="_blank" class="btn btn-outline-secondary btn-sm rounded-pill">
                           <i class="bi bi-printer"></i> Reimprimir orden de pago
                         </a>
@@ -128,10 +128,10 @@
              <div class="sbox">
               <div class="sbox-title ses-text-muted">
                 <div class="row">
-                  <div class="col-9">
+                  <div class="col-7">
                     <h5><i class="fa fa-table"></i> <strong> Evidencia de pago</strong></h5>
                   </div>
-                  <div class="col-3 text-right">
+                  <div class="col-5 text-right">
                       <button type="button" class="btn btn-sm btn-outline-success js-open-modal rounded-pill">
                             <i class="bi bi-cloud-arrow-up"></i> Subir evidencia
                       </button>

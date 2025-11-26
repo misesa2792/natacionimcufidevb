@@ -359,5 +359,38 @@ class Suscripciones extends Model
 		)
 		->get();
 	}
+
+	//dashboard
+	public function listaMesPagados($idy, $idm, $idtp, $active = 1)
+	{
+		return DB::table('ses_suscripcion')
+			->where('idyear', $idy)
+			->where('idmes', $idm)
+			->where('idtipo_pago', $idtp)
+			->where('active', $active)
+			->sum('monto_pagado');
+	}
+	public function listaMesPendientes($idy, $idm, $active = 1)
+	{
+		return DB::table('ses_suscripcion')
+			->where('idyear', $idy)
+			->where('idmes', $idm)
+			->where('active', $active)
+			->sum('monto_pagado');
+	}
+	public function listaMesCalendario($idy, $idm)
+	{
+		return DB::table('ses_suscripcion')
+			->select(
+				DB::raw('DAY(fecha_pago) as dia'),
+				DB::raw('SUM(monto_pagado) as total')
+			)
+			->where('idyear', $idy)
+			->where('idmes', $idm)
+			->groupBy(DB::raw('DAY(fecha_pago)'))
+			->orderBy(DB::raw('DAY(fecha_pago)'))
+			->get();
+	}
+    
     
 }

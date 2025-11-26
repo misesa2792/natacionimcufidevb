@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'Internet Selenny',
+    'title' => 'IMCUFIDE Valle de Bravo',
     'title_prefix' => '',
     'title_postfix' => '',
 

@@ -63,7 +63,9 @@ class User extends Authenticatable
                 'u.active',
                 'u.name',
                 'u.email',
-                'n.name as nivel'
+                'n.name as nivel',
+                'u.last_login_at as last_login',
+                'u.last_activity_at as last_activity'
             ])
             ->whereIn('u.idnivel', [2,3])
             ->orderBy('u.idnivel', 'asc');

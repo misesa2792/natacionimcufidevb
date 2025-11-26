@@ -20,6 +20,8 @@
                 </nav>
             </div>
 
+            
+
             <div class="container sbox">
                 <div class="sbox-title">
                     <h5><i class="fa fa-table"></i> <strong>{{ $pageTitle }}</strong></h5>

@@ -45,6 +45,8 @@
         Route::get('/ordenpago', 'ordenpago')->name('ordenpago');
         Route::get('/detail', 'detail')->name('detail');
         Route::post('/upload', 'upload')->name('upload');
+        Route::get('/reportepagos', 'reportepagos')->name('reportepagos');
+        Route::get('/dashboard', 'dashboard')->name('dashboard');
     });
 
     Route::controller(NivelesController::class)->prefix('niveles')->name('niveles.')->group(function () {

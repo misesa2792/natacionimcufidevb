@@ -68,6 +68,12 @@ class SuscripcionesController extends Controller
 
         return view($this->module.'.index',$this->data);
     }
+    public function reportepagos(Request $request)
+    {
+        $this->data['year'] = 2025;
+        $this->data['idyear'] = 1;
+        return view($this->module.'.reporte.index',$this->data);
+    }
     private function dataPagosAlumno($id, $idyear){
 		$meses = [];
 		foreach ($this->model->pagosPorMes($id, $idyear) as $r) {
@@ -461,6 +467,43 @@ class SuscripcionesController extends Controller
     private function addCerosLEFT($numero, $longitud) {
 		return str_pad($numero, $longitud, '0', STR_PAD_LEFT);
 	}
+    public function dashboard(Request $request)
+    {
+        $mes_efectivo = $this->model->listaMesPagados($request->idyear, $request->idmes, 2);
+        $mes_transferencia = $this->model->listaMesPagados($request->idyear, $request->idmes, 1);
+        $mes_pendiente = $this->model->listaMesPendientes($request->idyear, $request->idmes, 2);
+        $calendario = $this->model->listaMesCalendario($request->idyear, $request->idmes);
+
+        $map = $calendario->pluck('total', 'dia');
+
+        $rowYear = Year::find($request->idyear);
+        // Días reales del mes (28,29,30 o 31)
+        $daysInMonth = Carbon::create($rowYear->numero, $request->idmes, 1)->daysInMonth;
+        $labels = [];
+        $montos = [];
+
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $labels[] = $d;
+            $montos[] = (float) ($map[$d] ?? 0); // si no hay pago ese día → 0
+        }
+
+        $data = [
+            'mes_e'     => number_format($mes_efectivo, 2), 
+            'mes_t'     => number_format($mes_transferencia,2), 
+            'mes_p'     => number_format($mes_pendiente, 2),
+            'mes_total' => number_format(($mes_efectivo + $mes_transferencia + $mes_pendiente), 2)
+        ];
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Información',
+            'data' =>  $data,
+            'calendario' =>  [
+                'labels' =>  $labels,
+                'montos' =>  $montos,
+            ]
+            
+        ]);
+    }
     /* public function store(Request $request)
     {
         $row = Suscripciones::nadadorID($request->id);

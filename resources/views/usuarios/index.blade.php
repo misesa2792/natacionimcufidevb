@@ -73,6 +73,8 @@
                                     <th class="text-center">Nivel</th>
                                     <th class="text-center">Nombre Completo</th>
                                     <th class="text-center">Correo Electrónico</th>
+                                    <th class="text-center">Último Login</th>
+                                    <th class="text-center">Última Actividad</th>
                                     <th class="text-center">Acción</th>
                                 </tr>
                             </thead>
@@ -86,9 +88,11 @@
                                                 <span class="badge badge-danger">Inactivo</span>
                                             @endif
                                         </td>
-                                        <td class="text-center">{{ $v->nivel }}</td>
+                                        <td>{{ $v->nivel }}</td>
                                         <td>{{ $v->name }}</td>
                                         <td>{{ $v->email }}</td>
+                                        <td>{{ $v->last_login }}</td>
+                                        <td>{{ $v->last_activity }}</td>
                                         <td class="text-center">
                                              <a href="{{ route($pageModule . '.edit', $v->id) }}"
                                                 class="btn btn-xs btn-white">

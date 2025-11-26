@@ -23,6 +23,17 @@
                 </nav>
             </div>
 
+            <div class="row mb-2">
+                <div class="col-12">
+                    <a href="{{ route($pageModule.'.index',['page' => request()->page]) }}" class="btn btn-sm btn-primary rounded-pill ses-text-white">
+                        <i class="bi bi-cash-coin"></i> Registrar pagos
+                    </a>
+                    <a href="{{ route($pageModule.'.reportepagos') }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                        <i class="bi bi-wallet2"></i> Reporte pagos
+                    </a>
+                </div>
+            </div>
+
             <div class="sbox">
                 <div class="sbox-title">
                     <h5><i class="fa fa-table"></i> <strong>{{ $pageTitle }}</strong></h5>
