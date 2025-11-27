@@ -10,8 +10,9 @@
         Route::get('/', 'index')->name('index');
         Route::get('/pagar', 'pagar')->name('pagar');
         Route::post('/search', 'search')->name('search');
-        Route::get('/openpay/{id}', 'openpay')->name('openpay');
-
+        Route::get('/openpay', 'openpay')->name('openpay');
+        Route::get('/informacion', 'informacion')->name('informacion');
+        Route::post('/temporal', 'temporal')->name('temporal');
 
         Route::get('/horario', 'horario')->name('horario');
         Route::post('/update', 'update')->name('update');

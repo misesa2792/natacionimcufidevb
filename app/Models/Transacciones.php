@@ -16,7 +16,6 @@ class Transacciones extends Model
 		$perPage = $request['nopagina']; // default
 
 		$query = DB::table('ses_payments as p')
-			->leftJoin('users as u', 'u.id', '=', 'p.iduser')
 			->leftJoin('ses_suscripcion as s', 's.idsuscripcion', '=', 'p.idsuscripcion')
 			->select([
 				'p.idpayments as id',

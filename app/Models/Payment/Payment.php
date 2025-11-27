@@ -10,7 +10,6 @@ class Payment extends Model
     protected $primaryKey = 'idpayments'; 
 
     protected $fillable = [
-        'iduser',
         'idsuscripcion',
         'provider',
         'provider_charge_id',

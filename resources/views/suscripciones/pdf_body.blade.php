@@ -13,7 +13,10 @@
           </tr>
           <tr>
             <td colspan="2"></td>
-            <td class="text-center"><div class="s-8">{{ $row->fi_formateada }}</div>
+              <td class="text-center"><div class="s-8">
+                <div>{{ $row->fi_formateada }}</div>
+                <div><i>{{ $row->hora_pago }}</i></div>
+              </div>
             </td>
           </tr>
 

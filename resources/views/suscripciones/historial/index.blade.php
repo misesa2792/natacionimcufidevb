@@ -119,6 +119,7 @@
                                             <span class="badge rounded-pill bg-warning text-dark ses-badge-soft">
                                                 <i class="bi bi-hourglass-split me-1"></i> Pendiente
                                             </span>
+                                            <div><i>Sin evidencia</i></div>
                                         @endif
                                     </td>
                                     <td class="text-center">{{ $v->tipo_pago }}</td>

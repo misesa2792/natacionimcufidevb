@@ -74,30 +74,30 @@
         <div class="mt-4">
             <div class="sbox shadow-sm">
                 <div class="ses-text-muted mb-3">
-                    <h5><i class="bi bi-person-vcard me-1"></i> <strong>Buscar Nadador</strong></h5>
+                    <h5><i class="bi bi-person-vcard me-1"></i> <strong>Buscar Alumno</strong></h5>
                     <hr>
                 </div>
 
                 <form action="{{ route('acceso.search') }}" method="POST">
                     @csrf
 
-                    <label class="form-label">CURP del Nadador</label>
+                    <label class="form-label">CURP del Alumno</label>
                     <input type="text" name="curp" placeholder="CURP del Nadador" class="custom-input" required>
 
                     <div class="mt-3 text-center">
                         <button type="submit" class="btn btn-outline-primary btn-search">
-                            <i class="bi bi-search"></i> Buscar nadador
+                            <i class="bi bi-search"></i> Buscar alumno
                         </button>
                     </div>
                 </form>
 
                 {{-- Bloque para registro de nadador --}}
-                <div class="mt-3 text-center">
+                <div class="mt-3 text-center" style="display: none">
                     <small class="text-muted d-block mb-2">
-                        ¿El nadador aún no está registrado?
+                        ¿El alumno aún no está registrado?
                     </small>
                     <a href="{{ route('acceso.registrar') }}" class="btn btn-outline-secondary btn-register">
-                        <i class="bi bi-person-plus"></i> Registrar nadador
+                        <i class="bi bi-person-plus"></i> Registrar alumno
                     </a>
                 </div>
 

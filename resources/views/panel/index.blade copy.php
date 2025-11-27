@@ -29,162 +29,114 @@
 
                                 <div class="sbox-content">
 
-<div>DESKTOP</div>
-{{-- DESKTOP: calendario en tabla (como ya lo tienes) --}}
-<div class="table-responsive d-none d-md-block">
-        <table class="table table-bordered table-calendar align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th class="text-center">Lunes</th>
-                    <th class="text-center">Martes</th>
-                    <th class="text-center">Miércoles</th>
-                    <th class="text-center">Jueves</th>
-                    <th class="text-center">Viernes</th>
-                    <th class="text-center">Sábado</th>
-                    <th class="text-center">Domingo</th>
-                </tr>
-            </thead>
-            <tbody>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-calendar align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="text-center">Lunes</th>
+                                                    <th class="text-center">Martes</th>
+                                                    <th class="text-center">Miércoles</th>
+                                                    <th class="text-center">Jueves</th>
+                                                    <th class="text-center">Viernes</th>
+                                                    <th class="text-center">Sábado</th>
+                                                    <th class="text-center">Domingo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                 @foreach ($weeks as $week)
-                    <tr>
-                        @foreach ($week as $day)
-                            @php
-                                $date      = $day['date'];
-                                $inMonth   = $day['in_month'];
-                                $horarios  = $day['horarios'];
-                                $max       = $day['aforo_maximo'];
-                                $isToday   = $date->isToday();
-                            @endphp
+                  <tr>
+                    @foreach ($week as $day)
+                      @php
+                        $date = $day['date'];
+                        $inMonth = $day['in_month'];
+                        $horarios = $day['horarios'];
+                        $max = $day['aforo_maximo'];
 
-                            <td class="ses-gcal-cell
-                                @if(!$inMonth) ses-gcal-out @endif
-                                @if($date->isWeekend()) ses-gcal-weekend @endif
-                                {{ $isToday ? ' ses-gcal-today' : '' }}
-                            ">
-                                @include('panel._cal_day_block', [
-                                    'date'     => $date,
-                                    'inMonth'  => $inMonth,
-                                    'horarios' => $horarios,
-                                    'max'      => $max,
-                                    'isToday'  => $isToday,
-                                ])
-                            </td>
-                        @endforeach
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
- </div>
+                        $isToday = $date->isToday(); 
+                      @endphp
 
-<div>Mobile</div>
-{{-- MOBILE: tarjetas por semana y día --}}
-<div class="d-block d-md-none ses-calendar-mobile">
-    @foreach ($weeks as $weekIndex => $week)
-        @php
-            // Ver si esta semana tiene por lo menos un día del mes
-            $hasInMonth = collect($week)->contains(fn ($d) => $d['in_month']);
-            if (!$hasInMonth) {
-                continue; // no mostramos semanas “vacías” del mes anterior/siguiente
-            }
+  <td class="ses-gcal-cell
+        @if(!$inMonth) ses-gcal-out @endif
+        @if($date->isWeekend()) ses-gcal-weekend @endif
+        {{ $isToday ? ' ses-gcal-today' : '' }}
+    ">
+    <div class="ses-gcal-day">
 
-            $numSemana = $weekIndex + 1; // Semana 1, 2, 3, ...
-        @endphp
+        <div class="ses-gcal-day-header">
+            <span class="ses-gcal-day-number">{{ $date->format('d') }}</span>
 
-        {{-- Título de semana --}}
-        <div class="ses-mobile-week-title">
-            Semana {{ $numSemana }}
+            @if($isToday)
+                <span class="ses-gcal-chip-hoy">Hoy</span>
+            @endif
         </div>
 
-        {{-- Días de la semana --}}
-        @foreach ($week as $day)
-            @php
-                $date      = $day['date'];
-                $inMonth   = $day['in_month'];
-                $horarios  = $day['horarios'];
-                $max       = $day['aforo_maximo'];
-                $isToday   = $date->isToday();
+        <div class="ses-gcal-day-body">
+            @if (!$inMonth)
+                <div class="ses-gcal-out-text">Fuera de mes</div>
+            @else
+                @if ($horarios->isNotEmpty())
+                    @foreach ($horarios as $h)
+                        @php
+                            $ocupados     = $h['ocupados'];
+                            $disponibles  = $h['disponibles'];
 
-                // Si el día no pertenece al mes actual, NO lo mostramos en mobile
-                if (!$inMonth) {
-                    continue;
-                }
+                            if ($disponibles <= 0) {
+                                $estadoClase = 'horario-danger';
+                                $estadoTexto = 'Sin disponibilidad';
+                                $badgeClase  = 'badge-light-danger';
+                                $clickable   = false;
+                            } elseif ($disponibles <= 2) {
+                                $estadoClase = 'horario-warning';
+                                $estadoTexto = 'Quedan pocos lugares';
+                                $badgeClase  = 'badge-light-warning';
+                                $clickable   = true;
+                            } else {
+                                $estadoClase = 'horario-success';
+                                $estadoTexto = 'Lugares disponibles';
+                                $badgeClase  = 'badge-light-success';
+                                $clickable   = true;
+                            }
+                        @endphp
 
-                $horariosCount    = $horarios->count();
-                $totalDisponibles = $horarios->sum(fn($h) => $h['disponibles']);
-                $sinClases        = $horariosCount === 0;
-            @endphp
+                        <label
+                            class="ses-gcal-event {{ $estadoClase }} js-open-modal"
+                            data-idph="{{ $h['idplan_horario'] }}"
+                            data-fecha="{{ $date->format('Y-m-d') }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            title="{{ $estadoTexto }}">
+                            @if ($clickable)
+                                <input type="radio"
+                                    name="idplan_horario[]"
+                                    value='@json(['idplan_horario' => $h['idplan_horario'], 'fecha' => $date->format('Y-m-d')])'
+                                    class="d-none js-radio-horario">
+                            @endif
 
-            <div class="ses-mobile-day-card {{ $isToday ? 'ses-gcal-today is-open' : '' }}">
-                <div class="ses-mobile-day-header">
-
-                    {{-- Fecha --}}
-                    <div>
-                        <div class="ses-mobile-day-number">
-                            {{ $date->format('d') }}
-                            <span class="ses-mobile-day-name">
-                                {{ $date->translatedFormat('l') }}
-                            </span>
-                        </div>
-                        <div class="ses-mobile-day-month">
-                            {{ $date->translatedFormat('F') }}
-                        </div>
-                    </div>
-
-                    {{-- Resumen + botón --}}
-                    <div class="ses-mobile-day-right text-end">
-                        @if($sinClases)
-                            <div class="ses-mobile-day-summary ses-summary-empty">
-                                Sin clases
+                            <div class="ses-gcal-event-content">
+                                <span class="ses-gcal-event-time">
+                                    {{ \Carbon\Carbon::parse($h['time_start'])->format('h:i A') }}
+                                </span>
+                                <span class="ses-gcal-event-badge {{ $badgeClase }}">
+                                    {{ $h['ocupados'] }}/{{ $max }}
+                                </span>
                             </div>
-                        @else
-                            <div class="ses-mobile-day-summary">
-                                <span class="ses-chip ses-chip-horarios">
-                                    {{ $horariosCount }} horario{{ $horariosCount !== 1 ? 's' : '' }}
-                                </span>
-                                <span class="ses-chip ses-chip-libres">
-                                    {{ $totalDisponibles }} lugares libres
-                                </span>
-                            </div>
-                        @endif
-
-                        @if(!$sinClases)
-                            <button type="button"
-                                class="btn btn-xs btn-outline-secondary ses-mobile-toggle js-toggle-day">
-                                <span class="js-toggle-text">
-                                    {{ $isToday ? 'Ocultar horarios' : 'Ver horarios' }}
-                                </span>
-                                <i class="bi {{ $isToday ? 'bi-chevron-up' : 'bi-chevron-down' }}"></i>
-                            </button>
-                        @endif
-
-                        @if ($isToday)
-                            <span class="ses-gcal-chip-hoy ms-1 d-inline-block">Hoy</span>
-                        @endif
-                    </div>
-                </div>
-
-                @if(!$sinClases)
-                    <div class="ses-mobile-day-body"
-                        @unless($isToday) style="display:none" @endunless>
-                        @include('panel._cal_day_block', [
-                            'date'     => $date,
-                            'inMonth'  => $inMonth,
-                            'horarios' => $horarios,
-                            'max'      => $max,
-                            'isToday'  => $isToday,
-                            'mobile'   => true,
-                        ])
-                    </div>
+                        </label>
+                    @endforeach
+                @else
+                    <div class="ses-gcal-empty">Sin clases</div>
                 @endif
-            </div>
-        @endforeach
-    @endforeach
-</div>
+            @endif
+        </div>
+    </div>
+</td>
 
 
-
-
-
+                                                        @endforeach
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
 
                                 </div>
                             </div>
@@ -228,26 +180,6 @@
     @push('js')
         <script>
             $(function() {
-
-    // Toggle de días en mobile
-    $(document).on('click', '.js-toggle-day', function () {
-        const $btn  = $(this);
-        const $card = $btn.closest('.ses-mobile-day-card');
-        const $body = $card.find('.ses-mobile-day-body');
-
-        const isOpen = $card.hasClass('is-open');
-
-        $body.slideToggle(150);
-        $card.toggleClass('is-open');
-
-        $btn.find('.js-toggle-text').text(
-            isOpen ? 'Ver horarios' : 'Ocultar horarios'
-        );
-
-        const $icon = $btn.find('i');
-        $icon.toggleClass('bi-chevron-down bi-chevron-up');
-    });
-
               activarTooltips();
               function activarTooltips() {
                   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -348,169 +280,6 @@
     @endpush
 
     <style>
-        /* ====== MOBILE ====== */
-@media (max-width: 767.98px) {
-
-    .table-calendar {
-        /* la tabla ya no se muestra (se oculta con d-none d-md-block),
-           esto es por si se ve en alguna parte */
-        font-size: 0.75rem;
-    }
-
-    .ses-calendar-mobile {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .ses-mobile-day-card {
-        background: #ffffff;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        padding: 8px 10px;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
-    }
-
-    .ses-mobile-day-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 4px;
-    }
-
-    .ses-mobile-day-number {
-        font-weight: 700;
-        font-size: 0.95rem;
-        color: #111827;
-    }
-
-    .ses-mobile-day-name {
-        font-size: 0.8rem;
-        color: #6b7280;
-        display: block;
-    }
-
-    .ses-mobile-day-month {
-        font-size: 0.7rem;
-        color: #9ca3af;
-    }
-
-    .ses-mobile-day-body {
-        margin-top: 4px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    /* Ajustes para que los eventos se vean cómodos en mobile */
-    .ses-gcal-event-content {
-        padding: 4px 8px;
-        font-size: 0.8rem;
-    }
-
-    .ses-gcal-event-badge {
-        font-size: 0.7rem;
-    }
-
-    .ses-gcal-day {
-        min-height: auto;
-        padding: 0;
-    }
-    .ses-mobile-day-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 4px;
-}
-
-.ses-mobile-day-name {
-    font-size: 0.8rem;
-    color: #6b7280;
-    display: block;
-}
-
-.ses-mobile-day-month {
-    font-size: 0.7rem;
-    color: #9ca3af;
-}
-
-.ses-mobile-day-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
-}
-
-.ses-mobile-day-summary {
-    font-size: 0.75rem;
-    color: #16a34a;
-    font-weight: 600;
-}
-
-.ses-mobile-toggle {
-    font-size: 0.7rem;
-    padding: 2px 8px;
-    border-radius: 999px;
-    line-height: 1.2;
-}
-.ses-mobile-day-summary.text-danger {
-    color: #dc2626 !important;
-}
-/* Resumen neutro */
-.ses-mobile-day-summary {
-    font-size: 0.75rem;
-    color: #4b5563; /* gris medio */
-    font-weight: 500;
-    margin-bottom: 2px;
-}
-
-.ses-summary-empty {
-    color: #dc2626;
-    font-weight: 600;
-}
-
-/* Chips/píldoras */
-.ses-chip {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: #f3f4f6;      /* gris clarito */
-    border: 1px solid #e5e7eb;
-    margin-left: 4px;
-    margin-bottom: 2px;
-    font-size: 0.72rem;
-    white-space: nowrap;
-}
-
-/* Horarios: tono azulado */
-.ses-chip-horarios {
-    border-color: #bfdbfe;
-    background: #eff6ff;
-    color: #1d4ed8;
-}
-
-/* Lugares libres: tono verde suave */
-.ses-chip-libres {
-    border-color: #bbf7d0;
-    background: #ecfdf3;
-    color: #15803d;
-}
-.ses-mobile-week-title {
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: none;   /* en lugar de uppercase */
-    color: #374151;
-    margin-top: 10px;
-    margin-bottom: 4px;
-}
-.ses-mobile-week-title {
-    border-top: 1px solid #e5e7eb;
-    padding-top: 12px;
-    margin-top: 12px;
-}
-
-}
-
   /* ====== MODO GOOGLE CALENDAR ====== */
 .table-calendar tbody td:hover {
     background: #eef6ff !important;

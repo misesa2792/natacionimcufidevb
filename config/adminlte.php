@@ -343,12 +343,12 @@ return [
         ],
         [
             'text'    => 'Niveles',
-            'icon'    => 'bi bi-card-checklist',
+            'icon'    => 'bi bi-bar-chart-steps',
             'url' => 'nivel',
         ],
         [
             'text'    => 'Planes',
-            'icon'    => 'bi bi-card-checklist',
+            'icon'    => 'bi bi-journal-bookmark-fill',
             'url' => 'niveles',
             'can'     => 'menu-niveles',
         ],
@@ -356,7 +356,7 @@ return [
     ['header' => 'Módulos'],
         [
             'text'    => 'Alumnos',
-            'icon'    => 'bi bi-droplet-half',
+            'icon'    => 'bi bi-people',
             'url' => 'nadadores',
             'can'     => 'menu-nadadores',
         ],

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>IMCUFIDE Valle de Bravo - Pago en línea</title>
+    <title>Sistema Natación IMCUFIDE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {{-- Tus estilos (Bootstrap/AdminLTE si quieres mantener el look) --}}
@@ -50,7 +50,7 @@
 
             <div class="pago-header">
                 <div class="pago-logo text-uppercase text-muted">
-                    <img src="{{ asset('storage/natacion.png') }}" alt="Logo">
+                    <img src="{{ asset('mass/images/logo/natacion.png') }}" alt="Logo">
                 </div>
             </div>
 
@@ -69,7 +69,8 @@
             icon: @json(session('msgstatus')),
             title: @json(session('messagetext')),
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
+            toast: true
         });
     </script>
 @endif
@@ -81,7 +82,8 @@
             icon: "warning",
             title: @json($error),
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
+            toast: true
         });
     </script>
 @endforeach

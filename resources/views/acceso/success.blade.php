@@ -35,18 +35,6 @@
                     {{-- Mensaje principal --}}
                     <p class="mb-3">
                         Tu pago se ha registrado correctamente.  
-                        Ahora debes <strong>agendar el horario del nadador</strong> para completar la suscripción.
-                    </p>
-
-                    <a href="{{ route($pageModule .'.horario',['token' => $token]) }}" class="btn btn-outline-primary btn-md px-4">
-                        <i class="bi bi-calendar-week"></i> Agendar horario ahora
-                    </a>
-
-                    {{-- Nota para hacerlo después --}}
-                    <p class="small text-muted mb-3 mt-3">
-                        Si no puedes hacerlo en este momento, guarda este ID de cargo:
-                        <strong>{{ $charge_id }}</strong>.  
-                        Con ese folio podrás solicitar a <strong> IMCUFIDE Valle de Bravo</strong> el Link de asignación de horario.
                     </p>
 
                     {{-- Link para regresar --}}

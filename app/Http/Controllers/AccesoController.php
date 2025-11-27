@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Suscripciones;
 use App\Models\Reserva;
+use App\Models\Year;
 use App\Models\Nadadores;
+use App\Models\Reservatemporal;
+use Carbon\Carbon;
 
 use App\Services\SecureTokenService;
+use App\Services\UtilsService;
 
 use Carbon\CarbonPeriod;
 
@@ -18,11 +22,13 @@ class AccesoController extends Controller
     protected $model;	
 	public $module = 'acceso';
     protected SecureTokenService $secureToken;
+    protected UtilsService $utils;
 
-    public function __construct(Suscripciones $model, SecureTokenService $secureToken)
+    public function __construct(Suscripciones $model, SecureTokenService $secureToken, UtilsService $utils)
     {
         $this->model = $model;
         $this->secureToken = $secureToken;
+        $this->utils = $utils;
 
         $this->data = ['pageTitle'	=> 	"Suscripciones",
                         'pageNote'	    =>  "Lista de suscripciones",
@@ -88,33 +94,17 @@ class AccesoController extends Controller
 
         $row = $this->model->nadadorSearchCurpID(strtoupper($request->curp));
         if($row){
-            $limit = 1;
-            $rows = $this->model->suscripcionesNadador($row->id,$limit);
-            //Cuando la consulta no es una coleccion se trata como map
-            $rows = $rows->map(function ($v) {
-                return [
-                    'id'          => $v->id,
-                    'plan'        => $v->plan,
-                    'fi'          => $v->fi,
-                    'ff'          => $v->ff,
-                    'pago'        => $v->pago,
-                    'monto'       => $v->monto,
-                    'estado'      => $v->estado,
-                    'max_visitas' => $v->max_visitas_mes,
-                    'rows_fechas' => $this->model->listRegistros($v->id),
-                ];
-            });
-            
-            $tieneActiva = $rows->contains(function ($item) {
-                return $item['estado'] === 'ACTIVA';
-            });
-
-            $this->data['id'] = $row->id;
-            $this->data['tieneActiva'] = $tieneActiva;
-            $this->data['rowsSuscripciones'] = $rows;
-            $this->data['row'] = $row;
-        
-            return view($this->module.'.view',$this->data);
+            //Se busca el año actual
+            $year = Year::where("numero", Carbon::now()->format('Y'))->first();
+            if($year){
+                $this->data['pagos'] = $this->dataPagosAlumno($row->id, $year->idyear);
+                $this->data['meses']= $this->utils->listaMeses();
+                $this->data['curp'] = $row->curp;
+                $this->data['row'] = $row;
+                $this->data['idyear'] = $year->idyear;
+                $this->data['year'] = $year->numero;
+                return view($this->module.'.view',$this->data);
+            }
         }else{
              return redirect()
             ->route($this->module.'.index')
@@ -122,19 +112,146 @@ class AccesoController extends Controller
             ->with('msgstatus','error');
         }
     }
-    public function openpay($curp = null)
+    private function dataPagosAlumno($id, $idyear){
+		$meses = [];
+		foreach ($this->model->pagosPorMes($id, $idyear) as $r) {
+			$meses[$r->idmes] = ['id'           => $r->id, 
+                                'idtipo_pago'   => $r->idtipo_pago,
+                                'active'        => $r->active
+                            ];
+		}
+		return $meses;
+    }
+    public function informacion(Request $request)
     {
-        $row = $this->model->nadadorSearchCurpID(strtoupper($curp));
+        $row = $this->model->nadadorSearchCurpID(strtoupper($request->curp));
+        if($row){
+
+            $fechas = $this->model->fechasSuscripcion($row->id, $request->idy, $request->idm);
+            if($fechas->count() > 0){
+                $this->data['row'] = $row;
+                $this->data['rowsFechas'] = $fechas;
+                return view($this->module.'.vista',$this->data);
+            }
+            $month   = $request->idm;
+            $years = Year::find($request->idy);
+            $year = $years->numero;
+            // Horarios existentes por día de la semana (1=Lunes ... 7=Domingo)
+            $horarios = $this->model->horariosNiveles($row->idniveles);
+            // Rango que cubre todas las semanas del mes
+            $firstOfMonth = Carbon::create($year, $month, 1);
+            $start = $firstOfMonth->copy()->startOfWeek(Carbon::MONDAY);
+            $end   = $firstOfMonth->copy()->endOfMonth()->endOfWeek(Carbon::SUNDAY);
+
+            $days = [];
+            $current = $start->copy();
+
+            while ($current <= $end) {
+                $isoDow = $current->dayOfWeekIso; // 1..7
+                if($horarios->get($isoDow)){
+                    $collectHorarios = $this->calcularDisponibilidad($horarios->get($isoDow), $current->toDateString(), $row->aforo_maximo);
+                }else{
+                    $collectHorarios = collect();
+                }
+
+                $days[] = [
+                    'date'          => $current->copy(),
+                    'in_month'      => $current->month == $month,
+                    'horarios'      => $collectHorarios,
+                    'aforo_maximo'  => $row->aforo_maximo
+                ];
+
+                $current->addDay();
+            }
+            // Partimos en semanas de 7 días
+            $weeks = collect($days)->chunk(7);
+            $this->data['weeks'] = $weeks;
+
+            $years = Year::find($request->idy);
+            $this->data['row'] = $row;
+            $this->data['year'] = $years->numero;
+            $this->data['idy'] = $request->idy;
+            $this->data['month'] = $request->idm;
+            $this->data['id'] = $row->id;
+            $this->data['idm'] = $request->idm;
+            $this->data['curp'] = $request->curp;
+            return view($this->module.'.elegirhorario',$this->data);
+        }
+    }
+    public function temporal(Request $request)
+    {
+        if (empty($request->idplan_horario)) {
+            return back()
+                    ->withErrors('No seleccionaste ningún horario. Selecciona horarios para completar tu registro.');
+        }
+        $row = $this->model->nadadorSearchCurpID(strtoupper($request->curp));
+        if($row){
+        $total = count($request->idplan_horario);
+
+        if ($total > $row->max_visitas_mes) {
+           return back()
+                    ->withErrors('Has superado el número de visitas permitido por tu plan. Selecciona en total '. $row->max_visitas_mes . ' horarios para completar tu registro.');
+        }else if($total < $row->max_visitas_mes){
+            return back()
+                    ->withErrors(["Seleccionaste {$total} horarios, pero tu plan solo permite {$row->max_visitas_mes} visitas."]);
+        }
+
+        // ID que agrupa esta selección de días
+        $time = time();
+        $fechas = collect($request->idplan_horario)->map(function ($json) {
+            return json_decode($json, true); // array con id y fecha
+        });
+
+        foreach ($fechas as $fecha) {
+            Reservatemporal::create(
+                [
+                    'time'      => $time,
+                    'idnadador' => $row->id,
+                    'fecha'     => $fecha['fecha'],
+                    'idplan_horario' => $fecha['idplan_horario']
+                ]
+            );
+        }
+        
+        return redirect()
+            ->route($this->module.'.openpay', ['idm' => $request->idm, 'idy' => $request->idy, 'time' => $time,'curp' => $request->curp])
+            ->with('messagetext','Horario seleccionado correctamente, procede a realziar el pago.')
+            ->with('msgstatus','success');
+        }
+    }
+     private function calcularDisponibilidad($data, $fecha, $aforo_maximo){
+         return $data->map(function ($v) use ($fecha, $aforo_maximo) {
+                $ocupados = $this->model->totalReservasPorFecha($v->idplan_horario,$fecha);
+                $disponibles = max($aforo_maximo - $ocupados, 0);
+                return [
+                    'idplan_horario' => $v->idplan_horario,
+                    'dia_semana'     => $v->dia_semana,
+                    'time_start'     => $v->time_start,
+                    'ocupados'       => $ocupados,
+                    'disponibles'    => $disponibles,
+                    'fecha'          => $fecha,
+                ];
+            });
+    }
+    public function openpay(Request $request)
+    {
+        $row = $this->model->nadadorSearchCurpID(strtoupper($request->curp));
         if($row){
             $this->data['id'] = $row->id;
+            $this->data['idy'] = $request->idy;
+            $this->data['idm'] = $request->idm;
+            $this->data['time'] = $request->time;
+            $this->data['curp'] = $request->curp;
             $this->data['row'] = $row;
+            $this->data['data'] = $this->utils->calcularDescuento($row->precio, $row->descuento);
+            $this->data['rowsFechas'] = $this->model->fechasTemporales($row->id, $request->time);
             $this->data['merchantId'] = config('openpay.merchant_id');
             $this->data['publicKey'] = config('openpay.public_key');
             $this->data['production'] = config('openpay.production');
             return view('openpay.checkout', $this->data); 
         }
     }
-    public function horario(Request $request)
+   /* public function horario(Request $request)
     {
         $jsonToken = $this->secureToken->decode($request->token);
         if (!$jsonToken) {
@@ -169,7 +286,7 @@ class AccesoController extends Controller
         $this->data['max_visitas_mes'] = $suscripcion->max_visitas_mes;
         $this->data['rowsHorarios'] = $dias;
         return view($this->module.'.horarios',$this->data);
-    }
+    }*/
     public function update(Request $request)
     {
         $jsonToken = $this->secureToken->decode($request->token);

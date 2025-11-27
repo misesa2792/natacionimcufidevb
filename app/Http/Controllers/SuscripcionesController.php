@@ -12,6 +12,8 @@ use App\Models\Suscripcionesfiles;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 
+use App\Services\UtilsService;
+
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
@@ -26,11 +28,13 @@ class SuscripcionesController extends Controller
     public static int $perpage = 10;
 
     protected SecureTokenService $secureToken;
+    protected UtilsService $utils;
 
-    public function __construct(Suscripciones $model, SecureTokenService $secureToken)
+    public function __construct(Suscripciones $model, SecureTokenService $secureToken, UtilsService $utils)
     {
         $this->model = $model;
         $this->secureToken = $secureToken;
+        $this->utils = $utils;
 
         $this->data = ['pageTitle'	=> 	"Suscripciones",
                         'pageNote'	    =>  "Lista de suscripciones",
@@ -41,13 +45,9 @@ class SuscripcionesController extends Controller
     {
         $nopage = $request->integer('nopagina', static::$perpage);
         $page = $request->integer('page', 1);
-        $name = $request->input('name', '');
-
         $idyear = 1;
 
         $request['nopagina'] = $nopage;
-        $request['name'] = $name;
-
         $rows =  $this->model->listData($request->all());
 
        $rows->getCollection()->transform(function ($row) use ($idyear) {
@@ -60,7 +60,7 @@ class SuscripcionesController extends Controller
                 'rowsPagos'     => $this->dataPagosAlumno($row->id, $idyear),
             ];
         });
-        $this->data['meses']= [1 =>'Enero',2 =>'Febrero',3 => 'Marzo',4 => 'Abril',5 => 'Mayo',6 => 'Junio',7 => 'Julio',8 => 'Agosto',9 => 'Septiembre',10 => 'Octubre',11 => 'Noviembre',12 => 'Diciembre'];
+        $this->data['meses']= $this->utils->listaMeses();
 		$this->data['j'] = ($page * $nopage) - $nopage;
         $this->data['pagination'] = $rows;
         $this->data['year'] = 2025;
@@ -108,13 +108,10 @@ class SuscripcionesController extends Controller
                 return [
                     'id'          => $v->id,
                     'plan'      => $v->plan,
-                    'fi'          => $v->fi,
-                    'ff'          => $v->ff,
                     'pago'        => $v->pago,
                     'monto'       => $v->monto,
                     'estado'      => $v->estado,
-                    'max_visitas' => $v->max_visitas_mes,
-                    'rows_fechas' => $this->model->listRegistros($v->id),
+                    'max_visitas' => $v->max_visitas_mes
                 ];
             });
 
@@ -332,9 +329,6 @@ class SuscripcionesController extends Controller
         }
        
     }
-    private function calculoDescuento($precio, $descuento){
-        return ($precio * ($descuento / 100));
-    }
     public function ticket(Request $request){
 
         $validated = $this->model->validarSuscripcion($request->id, $request->idy, $request->idm);
@@ -347,15 +341,9 @@ class SuscripcionesController extends Controller
         
         $descuento = Descuento::find($request->iddescuento);
         $fecha = Carbon::now()->toDateString(); 
-
-        $total_descuento = 0;
-
-        if($descuento->descuento > 0){
-            $total_descuento = $this->calculoDescuento($row->precio,$descuento->descuento);
-        }
-
-        $total = $row->precio - $total_descuento;
-
+           
+        $dataPago = $this->utils->calcularDescuento($row->precio,$descuento->descuento);
+    
         $suscripcion = $this->model->create([
                         'idnadador'             => $request->id,
                         'idplan'                => $row->idplan,
@@ -363,14 +351,12 @@ class SuscripcionesController extends Controller
                         'idmes'                 => $request->idm,
                         'fecha_pago'            => $fecha,
                         'hora_pago'             => Carbon::now()->format('H:i:s'),
-                        'fecha_inicio'          => $fecha,
-                        'fecha_fin'             => $fecha,
                         'active'                => 2,
                         'idtipo_pago'           => $request->idtipo_pago,
                         'max_visitas_mes'       => $row->max_visitas_mes,
-                        'monto_general'         => $row->precio,
-                        'monto_pagado'          => $total,
-                        'descuento'             => $total_descuento,
+                        'monto_general'         => $dataPago['precio'],
+                        'monto_pagado'          => $dataPago['total'],
+                        'descuento'             => $dataPago['descuento'],
                         'desc_descuento'        => $descuento->descripcion,
                         'porc_descuento'        => $descuento->descuento,
                     ]);

@@ -21,7 +21,7 @@
 
             <div class="sbox">
               <div class="sbox-title ses-text-muted">
-                  <h5><i class="fa fa-table"></i> <strong> Datos Nadador</strong></h5>
+                  <h5><i class="fa fa-table"></i> <strong> Datos Alumno</strong></h5>
               </div>
               <div class="sbox-content"> 
 
@@ -42,7 +42,7 @@
                   <div class="mb-3">
                     <div class="row">
                       <div class="col-3 text-right ses-text-muted">Nivel:</div>
-                      <div class="col-9 ses-text-blue">{{ $row->plan }}</div>
+                      <div class="col-9 ses-text-blue">{{ $row->nivel }} <i>({{ $row->plan }})</i></div>
                     </div>
                   </div>
 
@@ -51,174 +51,93 @@
 
           </div>
 
+
+          @php
+              $now          = \Carbon\Carbon::now();
+              $year         = $now->year;
+              $currentMonth = $now->month;
+          @endphp
+
         <div class="col-12">
-          
+
           <div class="sbox">
             <div class="sbox-title ses-text-muted">
-                <h5><i class="fa fa-table"></i> <strong> Suscripción </strong></h5>
-            </div>
-            <div class="sbox-content"> 
-                @if($rowsSuscripciones->isNotEmpty())
-
-                    @foreach($rowsSuscripciones as $v)
-
-                      <div class="mb-3">
-                        <div class="row">
-                          <div class="col-4 text-right ses-text-muted">Estatus:</div>
-                          <div class="col-8 ses-text-blue">{{ $v['estado'] }}</div>
-                        </div>
-                      </div>  
-
-                      <div class="mb-3">
-                        <div class="row">
-                          <div class="col-4 text-right ses-text-muted">Plan contratado:</div>
-                          <div class="col-8 ses-text-blue">{{ $v['plan'] }}</div>
-                        </div>
-                      </div>
-
-                      <div class="mb-3">
-                        <div class="row">
-                          <div class="col-4 text-right ses-text-muted">Tipo de pago:</div>
-                          <div class="col-8 ses-text-blue">{{ $v['pago'] }}</div>
-                        </div>
-                      </div>
-
-                      <div class="mb-3">
-                        <div class="row">
-                          <div class="col-4 text-right ses-text-muted">Fecha Inicio:</div>
-                          <div class="col-8 ses-text-blue">{{ $v['fi'] }}</div>
-                        </div>
-                      </div>
-
-                      <div class="mb-3">
-                        <div class="row">
-                          <div class="col-4 text-right ses-text-muted">Fecha Fin:</div>
-                          <div class="col-8 ses-text-blue">{{ $v['ff'] }}</div>
-                        </div>
-                      </div>
-
-                      <div class="mb-3">
-                        <div class="row">
-                          <div class="col-4 text-right ses-text-muted">Total de visitas permitidas por plan:</div>
-                          <div class="col-8 ses-text-blue">{{ $v['max_visitas'] }}</div>
-                        </div>
-                      </div>
-
-                      <div class="mb-3">
-                       
-
-                        <div class="row mt-3">
-                          <div class="col-12 ses-text-blue">
-
-                            @if($v['rows_fechas']->isNotEmpty())
-
-                              <div class="row">
-                                <div class="col-12 ses-text-muted">Horario Asignado:</div>
-                              </div>
-                              
-                              <table class="table table-bordered">
-                                  <tr>
-                                    <th class="text-center">Estatus</th>
-                                    <th class="text-center">Fecha reservada</th>
-                                    <th class="text-center">Horario</th>
-                                  </tr>
-                                  @foreach($v['rows_fechas'] as $e)
-                                    <tr>
-                                      <td class="text-center">
-                                        @if($e->active == 1)
-                                          <span class="badge badge-primary">Reservado</span>
-                                        @elseif($e->active == 2)
-                                          <span class="badge badge-success">Utilizado</span>
-                                        @elseif($e->active == 3)
-                                          <span class="badge badge-dark">No Asistio</span>
-                                        @endif
-                                      </td>
-                                      <td class="text-center">{{ $e->fecha_formateada }}</td>
-                                      <td class="text-center">{{ $e->time_start .'-'.$e->time_end }}</td>
-                                    </tr>
-                                  @endforeach
-                                </table>
-                              @else 
-
-                                @if($v['estado'] == 'ACTIVA')
-                                  <div class="mt-2">
-                                      <div class="border rounded-3 p-3 bg-warning bg-opacity-25 d-flex align-items-start">
-                                          <div>
-                                              <p class="mb-1 fw-semibold">
-                                                  Aún no has asignado el horario de tus visitas.
-                                              </p>
-                                              <p class="mb-2 small text-muted">
-                                                  Para completar tu suscripción, solicita en 
-                                                  <strong>IMCUFIDE Valle de Bravo</strong> el 
-                                                  <strong>link de asignación de horario</strong> y sigue las instrucciones
-                                                  que te proporcionen por WhatsApp.
-                                              </p>
-
-                                              <p class="mb-0 small">
-                                                  Si ya te compartieron el link, ábrelo desde ese medio para elegir
-                                                  tus horarios disponibles.
-                                              </p>
-                                          </div>
-                                      </div>
-                                  </div>
-                                @endif
-
-                              @endif
-
-                          </div>
-                        </div>
-                      </div>
-                    @endforeach
-                 </table>
-                @else 
-                   <div class="p-4 text-center">
-                      <i class="fa fa-folder-open fa-3x text-muted"></i>
-
-                      <h5 class="mt-3 text-muted">
-                          El nadador no cuenta con ninguna suscripción
-                      </h5>
-
-                      <a href="{{ route($pageModule . '.openpay', $row->curp) }}" class="btn btn-outline-primary btn-md mt-4">
-                          <i class="fa fa-plus"></i> Crear suscripción
-                      </a>
-                  </div>
-                @endif
-
-            </div>
-          </div>
-
-
-          @if($tieneActiva)
-            <div class="card border-success mt-4">
-                <div class="card-body text-center">
-                    <h5 class="text-success mb-0">
-                        <i class="fa fa-check-circle"></i> Suscripción Activa
+                <div class="row">
+                  <div class="col-8">
+                    <h5>
+                        <i class="bi bi-calendar3 me-1"></i>
+                        <strong> Calendario de meses</strong>
                     </h5>
-                    <small class="text-muted">El nadador tiene una suscripción vigente</small>
+                  </div>
+                  <div class="col-4 text-right ses-year-label"><strong>{{ $year }}</strong></div>
                 </div>
             </div>
-          @else
-              @if($rowsSuscripciones->isNotEmpty())
-                <div class="card border-danger shadow-sm mt-4">
-                    <div class="card-body text-center">
 
-                        <div class="mb-3">
-                            <span class="text-danger" style="font-size:20px;">
-                                <i class="fa fa-times-circle"></i>
-                                El nadador tiene la suscripción vencida
-                            </span>
-                        </div>
+            <div class="sbox-content">
+              @php
+                  $nowMonth = now()->month; // 1-12
+                  $nowYear  = now()->year;  // 2025, etc.
+              @endphp
+              <div class="row g-2 ses-month-grid">
+                  @foreach($meses as $idmes => $mes)
+                      @php
+                          $monthDate = \Carbon\Carbon::create($year, $idmes, 1);
+                          $pagado = isset($pagos[$idmes]);
+                          $isCurrent = $idmes === $currentMonth;
+                          $isCurrentYear = ($year == $nowYear); // si usas año real
+                          $isPastMonth   = $isCurrentYear && ($idmes < $nowMonth);
+                      @endphp
+                      <div class="col-4 col-md-3">
+                         @if($isPastMonth)
+                            @if($pagado)
+                                <a href="{{ route($pageModule . '.informacion',['curp' => $row->curp, 'idy' => $idyear,'idm' => $idmes]) }}"
+                                  class="ses-month-card-success {{ $isCurrent ? 'is-current' : '' }}">
+                                  <span class="ses-month-number">{{ str_pad($idmes, 2, '0', STR_PAD_LEFT) }}</span>
+                                  <span class="ses-month-name text-capitalize">{{ $mes }}</span>
+                                  <div>
+                                    <i class="bi bi-cash-coin me-1 ses-month-name"></i> 
+                                    <span class="ses-month-name text-capitalize">Pagado</span>
+                                  </div>
+                                </a>
+                            @else
+                                <span class="ses-month-card" title="No se puede pagar meses anteriores">
+                                   <span class="ses-month-number">{{ str_pad($idmes, 2, '0', STR_PAD_LEFT) }}</span>
+                                    <span class="text-capitalize">{{ $mes }}</span>
+                                    <div class="ses-month-name "><i class="bi bi-lock-fill me-1"></i> Cerrado</div>
+                                </span>
+                            @endif
+                         @else 
 
-                        <a href="{{ route($pageModule . '.openpay', $row->curp) }}"
-                          class="btn btn-outline-primary btn-md px-4 py-2"
-                          style="border-width:2px;">
-                            <i class="fa fa-plus"></i> Crear suscripción
-                        </a>
+                            @if($pagado)
+                                <a href="{{ route($pageModule . '.informacion',['curp' => $row->curp, 'idy' => $idyear,'idm' => $idmes]) }}"
+                                  class="ses-month-card-success {{ $isCurrent ? 'is-current' : '' }}">
+                                  <span class="ses-month-number">{{ str_pad($idmes, 2, '0', STR_PAD_LEFT) }}</span>
+                                  <span class="ses-month-name text-capitalize">{{ $mes }}</span>
+                                  <div>
+                                    <i class="bi bi-cash-coin me-1 ses-month-name"></i> 
+                                    <span class="ses-month-name text-capitalize">Pagado</span>
+                                  </div>
+                                </a>
+                            @else
+                                <a href="{{ route($pageModule . '.informacion',['curp' => $row->curp, 'idy' => $idyear,'idm' => $idmes]) }}"
+                                class="ses-month-card-danger {{ $isCurrent ? 'is-current' : '' }}">
+                                  <span class="ses-month-number">{{ str_pad($idmes, 2, '0', STR_PAD_LEFT) }}</span>
+                                  <span class="ses-month-name text-capitalize">{{ $mes }}</span>
+                                  <div>
+                                    <i class="bi bi-cash-coin me-1 ses-month-name"></i> 
+                                    <span class="ses-month-name text-capitalize">Pagar</span>
+                                  </div>
+                              </a>
+                            @endif
+                                
+                            
+                         @endif
+                      </div>
+                  @endforeach
+              </div>
+          </div>
+      </div>
 
-                    </div>
-                </div>
-              @endif
-          @endif
 
         </div>
 
@@ -232,6 +151,113 @@
 </main>
 
 <style>
+/* ===== MINI CALENDARIO DE MESES ===== */
+
+.ses-year-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.ses-year-sub {
+    font-size: 0.75rem;
+}
+
+/* Contenedor de los meses */
+.ses-month-grid {
+    margin-top: 4px;
+}
+.ses-month-card-danger {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #fd9999;
+    background: #f7c2c2;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: background 0.15s ease, box-shadow 0.15s ease,
+                transform 0.12s ease, border-color 0.15s ease;
+}
+.ses-month-card-success {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #8aec7d;
+    background: #c8f7c2;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: background 0.15s ease, box-shadow 0.15s ease,
+                transform 0.12s ease, border-color 0.15s ease;
+}
+/* Tarjeta de mes */
+.ses-month-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: background 0.15s ease, box-shadow 0.15s ease,
+                transform 0.12s ease, border-color 0.15s ease;
+}
+
+.ses-month-card:hover {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    box-shadow: 0 3px 6px rgba(37, 99, 235, 0.15);
+    transform: translateY(-1px);
+}
+
+/* Número grande del mes */
+.ses-month-number {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Nombre del mes */
+.ses-month-name {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   .badge {
     display: inline-block;
     padding: 2px 5px;

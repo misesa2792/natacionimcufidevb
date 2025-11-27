@@ -1,230 +1,68 @@
-@extends('layouts.app')
+@extends('layouts.pago')
 
 @section('content')
 
 <main class="row">
   <div class="col-12">
-    <div class="page-header">
-      <div class="page-title">
-          <h4 class="text-blue-900">
-            <strong>{{ $pageTitle }}</strong>
-            <small class="text-gray-400"><i>{{ $pageNote }}</i></small>
-          </h4>
-      </div>
-      
-      <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                <a href="{{ URL::to('dashboard') }}">
-                  <i class="fa fa-home s-18"></i>
-                </a>
-              </li>
-              <li class="breadcrumb-item">
-                  <a href="{{ route($pageModule.'.index') }}" class="text-decoration-none">
-                    <i>{{ $pageTitle }}</i>
-                  </a>    
-              </li>
-              <li class="breadcrumb-item active">
-                <i class="ses-text-muted">Seleccionar horario</i>
-              </li>
-          </ol>
-      </nav>
-    </div>
-
-    <div class="row">
-      <div class="col-12 mb-2">
-        <a href="{{ route($pageModule.'.index',['page' => request()->page]) }}"
-           class="btn btn-sm btn-outline-secondary rounded-pill">
-            <i class="fa fa-arrow-left me-1"></i> Regresar
+   
+    <div class="text-center">
+         <a href="{{ route($pageModule .'.pagar') }}">
+            &laquo; Regresar a la página principal
         </a>
-      </div>
     </div>
   
     <div class="row mt-2">
-      <div class="col-12">
-        <div class="sbox">
-          <div class="sbox-title ses-text-muted">
-              <h5><i class="fa fa-table"></i> <strong> Alumno</strong></h5>
-          </div>
-          <div class="sbox-content"> 
 
-              <div class="mb-3">
-                <div class="row">
-                  <div class="col-3 text-end ses-text-muted">Nombre completo:</div>
-                  <div class="col-9 ses-text-blue">{{ $row->nombre }}</div>
+        <div class="col-12">
+            <div class="sbox">
+                <div class="sbox-title ses-text-muted">
+                    <h5><i class="fa fa-table"></i> <strong> Datos Alumno</strong></h5>
                 </div>
-              </div>
+                <div class="sbox-content"> 
 
-              <div class="mb-3">
-                <div class="row">
-                  <div class="col-3 text-end ses-text-muted">Plan:</div>
-                  <div class="col-3">
-                    <strong>{{ $row->nivel }}</strong>
-                    <i>({{ $row->plan }})</i>
-                  </div>
-                  <div class="col-3 text-end ses-text-muted">Precio:</div>
-                  <div class="col-3"><strong>${{ $row->precio }}</strong></div>
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-3 text-right ses-text-muted">Nadador:</div>
+                            <div class="col-9 ses-text-blue">{{ $row->nombre }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-3 text-right ses-text-muted">CURP:</div>
+                            <div class="col-9 ses-text-blue">{{ $row->curp }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-3 text-right ses-text-muted">Nivel:</div>
+                            <div class="col-9 ses-text-blue">{{ $row->nivel }} <i>({{ $row->plan }})</i></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="row">
+                            <div class="col-3 text-right ses-text-muted">Máximo de visitas al mes:</div>
+                            <div class="col-9 ses-text-blue">{{ $row->max_visitas_mes }}</i></div>
+                        </div>
+                    </div>
+
                 </div>
-              </div>
-
-              <div class="mb-3">
-                <div class="row">
-                  <div class="col-3 text-end ses-text-muted">Mes a pagar:</div>
-                  <div class="col-3">{{ $mes }}</div>
-                  <div class="col-3 text-end ses-text-muted">Máximo de visitas al mes:</div>
-                  <div class="col-3">{{ $row->max_visitas_mes }}</div>
-                </div>
-              </div>
-
-          </div>
+            </div>
         </div>
-      </div>
-
-      <div class="col-4">
-        {{-- aquí puedes meter un resumen, leyenda de colores, etc. --}}
-      </div>
 
       <div class="col-12 mt-2">
-        <form action="{{ route($pageModule.'.temporal',['id' => $id, 'idm' => $idm, 'idy' => $idy,'page' => request()->page]) }}"
+        <form action="{{ route('acceso.temporal',['curp' => $curp, 'idm' => $idm, 'idy' => $idy]) }}"
               method="POST">
           @csrf
 
           <main class="row">
             <div class="col-12">
-              <div class="sbox">
-                <div class="sbox-title d-flex justify-content-between align-items-center">
-                  <h5 class="mb-0">
-                    <i class="bi bi-calendar3 me-1"></i>
-                    Calendario de horarios -
-                    {{ \Carbon\Carbon::create($year, $month)->translatedFormat('F Y') }}
-                  </h5>
+                <h4 class="text-center">Calendario de horarios - {{ \Carbon\Carbon::create($year, $month)->translatedFormat('F Y') }}</h4>
 
-                  <div style="display:none">
-                    @php
-                      $prev = \Carbon\Carbon::create($year, $month)->subMonth();
-                      $next = \Carbon\Carbon::create($year, $month)->addMonth();
-                    @endphp
-                    <a href="{{ request()->fullUrlWithQuery(['month' => $prev->month, 'year' => $prev->year]) }}"
-                       class="btn btn-sm btn-outline-secondary">
-                      &laquo; Mes anterior
-                    </a>
-                    <a href="{{ request()->fullUrlWithQuery(['month' => $next->month, 'year' => $next->year]) }}"
-                       class="btn btn-sm btn-outline-secondary">
-                      Siguiente mes &raquo;
-                    </a>
-                  </div>
-                </div>
-
-                <div class="sbox-content">
-
-DESKTOP
-
-{{-- DESKTOP: tabla calendario (igual que ya la tienes) --}}
-    <div class="table-responsive d-none d-md-block">
-        <table class="table table-bordered table-calendar ses-gcal-table align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th class="text-center">Lunes</th>
-                <th class="text-center">Martes</th>
-                <th class="text-center">Miércoles</th>
-                <th class="text-center">Jueves</th>
-                <th class="text-center">Viernes</th>
-                <th class="text-center">Sábado</th>
-                <th class="text-center">Domingo</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($weeks as $week)
-                <tr>
-                  @foreach($week as $day)
-                    @php
-                        $date     = $day['date'];
-                        $inMonth  = $day['in_month'];
-                        $horarios = $day['horarios'];
-                        $max      = $day['aforo_maximo'];
-
-                        $isToday  = $date->isToday();
-                    @endphp
-
-                    <td class="ses-gcal-cell
-                        @if(!$inMonth) ses-gcal-out @endif
-                        @if($date->isWeekend()) ses-gcal-weekend @endif
-                        {{ $isToday ? 'ses-gcal-today' : '' }}
-                    ">
-                      <div class="ses-gcal-day">
-                        <div class="ses-gcal-day-header">
-                          <span class="ses-gcal-day-number">{{ $date->format('d') }}</span>
-
-                          @if($isToday)
-                            <span class="ses-gcal-chip-hoy">Hoy</span>
-                          @endif
-                        </div>
-
-                        <div class="ses-gcal-day-body">
-                          @if(!$inMonth)
-                            <div class="ses-gcal-out-text">Fuera de mes</div>
-                          @else
-                            @if($horarios->isNotEmpty())
-                              @foreach($horarios as $h)
-                                @php
-                                  $ocupados    = $h['ocupados'];
-                                  $disponibles = $h['disponibles'];
-
-                                  if ($disponibles <= 0) {
-                                      $estadoClase  = 'horario-danger';
-                                      $estadoTexto  = 'Sin disponibilidad';
-                                      $badgeClase   = 'badge-light-danger';
-                                      $clickable    = false;
-                                  } elseif ($disponibles <= 2) {
-                                      $estadoClase  = 'horario-warning';
-                                      $estadoTexto  = 'Quedan pocos lugares';
-                                      $badgeClase   = 'badge-light-warning';
-                                      $clickable    = true;
-                                  } else {
-                                      $estadoClase  = 'horario-success';
-                                      $estadoTexto  = 'Lugares disponibles';
-                                      $badgeClase   = 'badge-light-success';
-                                      $clickable    = true;
-                                  }
-                                @endphp
-
-                                <label
-                                  class="ses-gcal-event {{ $estadoClase }} {{ $clickable ? '' : 'ses-gcal-disabled' }}"
-                                  title="{{ $estadoTexto }}">
-                                  
-                                  @if($clickable)
-                                    <input type="checkbox"
-                                           name="idplan_horario[]"
-                                           value='@json(["idplan_horario" => $h["idplan_horario"], "fecha" => $date->format("Y-m-d")])'
-                                           class="d-none js-horario-check">
-                                  @endif
-
-                                  <div class="ses-gcal-event-content">
-                                    <span class="ses-gcal-event-time">
-                                      {{ \Carbon\Carbon::parse($h['time_start'])->format('h:i A') }}
-                                    </span>
-                                    <span class="ses-gcal-event-badge {{ $badgeClase }}">
-                                      {{ $h['ocupados'] }}/{{ $max }}
-                                    </span>
-                                  </div>
-                                </label>
-                              @endforeach
-                            @else
-                              <div class="ses-gcal-empty">Sin clases</div>
-                            @endif
-                          @endif
-                        </div>
-                      </div>
-                    </td>
-                  @endforeach
-                </tr>
-              @endforeach
-            </tbody>
-        </table>
-    </div>
-MOBILE
     {{-- MOBILE: semanas + tarjetas por día (mismo estilo de la otra vista) --}}
-    <div class="d-block d-md-none ses-calendar-mobile">
+    <div class="d-block ses-calendar-mobile">
         @foreach ($weeks as $weekIndex => $week)
             @php
                 // ¿Esta semana tiene algún día dentro del mes?
@@ -340,7 +178,7 @@ MOBILE
                                         <input type="checkbox"
                                             name="idplan_horario[]"
                                             value='@json(["idplan_horario" => $h["idplan_horario"], "fecha" => $date->format("Y-m-d")])'
-                                            class="d-none js-horario-check">
+                                            class="ses-hidden-check js-horario-check">
                                     @endif
 
                                     <div class="ses-gcal-event-content">
@@ -361,14 +199,11 @@ MOBILE
         @endforeach
     </div> {{-- /mobile --}}
 
-
-                </div>
-              </div>
             </div>
           </main>
 
           {{-- BOTÓN FLOTANTE MOBILE --}}
-            <div class="ses-floating-counter d-md-none" id="sesFloatingCounter">
+            <div class="ses-floating-counter" id="sesFloatingCounter" style="display:none;">
                 <button type="button" class="ses-floating-btn" id="sesFloatingBtn">
                     <span class="ses-floating-count" id="sesFloatingCount">0</span>
                     <span class="ses-floating-text">horarios seleccionados</span>
@@ -384,6 +219,7 @@ MOBILE
               </button>
             </div>
           </div>
+
         </form>
       </div>
 
@@ -392,7 +228,7 @@ MOBILE
 </main>
 
 {{-- JS para que al hacer click en el label se marque el checkbox y se vea seleccionado --}}
-@push('js')
+@section('js')
 <script>
   $(function () {
       
@@ -487,11 +323,10 @@ MOBILE
     });
   });
 </script>
-@endpush
+@endsection
 
 <style>
   /* ====== MOBILE CALENDAR CARDS ====== */
-@media (max-width: 767.98px) {
     .ses-calendar-mobile {
         display: flex;
         flex-direction: column;
@@ -645,11 +480,11 @@ MOBILE
 .ses-floating-text {
     white-space: nowrap;
 }
-
-
+.ses-hidden-check {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }
-
-
 
 /*DESKTOP*/
 /* ====== BASE TABLA CALENDARIO (mismo estilo pro) ====== */
@@ -821,6 +656,8 @@ MOBILE
     box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.25);
     transform: scale(1.01);
 }
+
+
 
 </style>
 

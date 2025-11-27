@@ -6,21 +6,27 @@ use App\Services\OpenpayService;
 
 use App\Models\Payment\Payment;
 use App\Models\Suscripciones;
+use App\Models\Year;
+use App\Models\Reserva;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
 use Illuminate\Support\Facades\DB;
 
+use Carbon\Carbon;
+
 use App\Services\SecureTokenService;
+use App\Services\UtilsService;
 
 class OpenpayPaymentController extends Controller
 {
     protected $data = [];
     protected SecureTokenService $secureToken;
+    protected UtilsService $utils;
 
-    public function __construct(protected OpenpayService $openpay, SecureTokenService $secureToken) {
+    public function __construct(protected OpenpayService $openpay, SecureTokenService $secureToken, UtilsService $utils) {
         $this->secureToken = $secureToken;
+        $this->utils = $utils;
     }
 
     // Muestra el formulario
@@ -41,33 +47,35 @@ class OpenpayPaymentController extends Controller
         $request->validate([
             'token_id'          => 'required|string',
             'device_session_id' => 'required|string',
-            'idnadador'         => 'required',
         ]);
 
         try {
-            $row = Suscripciones::nadadorID($request->input('idnadador'));
+            $row = Suscripciones::nadadorSearchCurpID(strtoupper($request->curp));
+            //$row = Suscripciones::nadadorID($request->input('idnadador'));
             if (!$row) {
                 return back()->withErrors('ID de nadador no encontrado!');
             }
 
-            $idnadador   = (int) $request->input('idnadador');
-            $idplan      = $row->idplan;
-            $amountPesos = round($row->precio, 2);// si guardas en centavos en BD:
-
+            $idnadador  = (int) $row->id;
+            $idy        = (int) $request->idy;  //idaño
+            $idm        = (int) $request->idm; //idmes
+            $idplan     = (int) $row->idplan;
+            $amount = $this->utils->calcularDescuento($row->precio, $row->descuento);
             //Validar que el usuario no tenga una sesión activa antes de cobrar
-            $yaActiva = Suscripciones::validateSubscriptionActive($idnadador);
+            $yaActiva = Suscripciones::validateSubscriptionActive($idnadador, $idy, $idm);
             if ($yaActiva) {
                 return back()->withErrors('El nadador ya tiene una suscripción activa.');
             }
-
-            $description = "Suscripción {$row->plan} - Nadador: {$row->nombre}";
-
+            $year = Year::find($idy);
+            $mes = $this->utils->buscarMes($idm);
+          
+            $description = "Mensualidad Alberca {$mes} {$year->numero} - {$row->nombre} - {$row->nivel} ({$row->plan})";
             $charges = $this->openpay->charges();
 
             $chargeData = [
                 'method'            => 'card',
                 'source_id'         => $request->input('token_id'),
-                'amount'            => $amountPesos,
+                'amount'            => $amount['total'],
                 'currency'          => 'MXN',
                 'description'       => $description,
                 'device_session_id' => $request->input('device_session_id'),
@@ -84,54 +92,61 @@ class OpenpayPaymentController extends Controller
                                     ],
             ];
 
-                $charge = $charges->create($chargeData);
+            $charge = $charges->create($chargeData);
 
-                // Estado que devuelve Openpay, ej. 'completed'
-                $status = $charge->status ?? 'completed';
-                // Usuario autenticado (si tienes login), si no, null
-                $userId = auth()->id() ?? 0;
+            // Estado que devuelve Openpay, ej. 'completed'
+            $status = $charge->status ?? 'completed';
 
-                //Se crea la suscripción 
-                $base = now();      // ya con timezone corregido
-                $fecha_inicio = $base->toDateString();
-                $fecha_fin    = $base->copy()->addDays($row->duracion_dias)->toDateString();
+            $idSuscripcion = 0;
 
-                $idSuscripcion = 0;
-
+            
                 DB::beginTransaction();
 
                     $rowSuscripcion = Suscripciones::create([
+                        'active'                 => 2,
+                        'idyear'                 => $idy,
+                        'idmes'                  => $idm,
                         'idnadador'              => $idnadador,
                         'idplan'                 => $idplan,
-                        'fecha_inicio'           => $fecha_inicio,
-                        'fecha_fin'              => $fecha_fin,
-                        'active'                 => 1,
-                        'idtipo_pago'            => 1,
-                        'monto'                  => $amountPesos,
-                        'max_visitas_mes'        => $row->max_visitas_mes
+                        'fecha_pago'             => Carbon::now()->toDateString(),
+                        'hora_pago'              => Carbon::now()->format('H:i:s'),
+                        'idtipo_pago'            => 3,
+                        'max_visitas_mes'        => $row->max_visitas_mes,
+                        'monto_general'          => $amount['precio'],
+                        'monto_pagado'           => $amount['total'],
+                        'descuento'              => $amount['descuento'],
+                        'desc_descuento'         => $row->desc_descuento,
+                        'porc_descuento'         => $row->descuento,
                     ]);
 
                     $idSuscripcion = $rowSuscripcion->idsuscripcion;
-                
                     // Guardar en BD
                     $rowPayment = Payment::create([
-                        'iduser'            => $userId,
                         'idsuscripcion'     => $idSuscripcion,
                         'provider'          => 'openpay',
                         'provider_charge_id'=> $charge->id,
                         'status'            => $status,
-                        'amount'            => $amountPesos,
-                        'currency'          => $charge->currency ?? 'MXN',
+                        'amount'            => $amount['total'],
+                        'currency'          => 'MXN',
                         'description'       => $description,
                         'payer_email'       => $request->email,
                         'raw_payload'       => json_encode($charge)
                     ]);
+
+                    foreach (Suscripciones::fechasTemporales($row->id, $request->time) as $f) {
+                        Reserva::create([
+                                    'idsuscripcion'  => $idSuscripcion,
+                                    'idplan_horario' => $f->idplan_horario,
+                                    'fecha'          => $f->fecha,
+                                    'active'         => 1
+                                ]);
+                    }
+
                 DB::commit();
 
                $sesToken = $this->secureToken->encode([ 'ids' => $idSuscripcion ]);
                                                   //'idp' => $rowPayment->idpayments,
                                                     //'key' => $charge->id,
-
                 return redirect()->route('acceso.success', ['id' => $charge->id, 'token' => $sesToken]);
         } catch (\Exception $e) {
             DB::rollBack();

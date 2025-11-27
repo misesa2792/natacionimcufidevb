@@ -101,24 +101,53 @@
                 <div class="m-b-md ses-text-blue">{{ $row->nombre }}</div>
 
                 <label>Nivel</label>
-                <div class="m-b-md">{{ $row->plan }}</div>
-            
-                <label>Monto a pagar</label>
-                <h5 class="m-b-md">${{ $row->precio }} MXN</h5>
+                <div class="m-b-md ses-text-blue">{{ $row->nivel }} <i>({{ $row->plan }})</i></div>
+           
+                <table class="table table-bordered">
+                    <tr>
+                        <th class="text-center">Fechas reservadas</th>
+                    </tr>
+                    @foreach($rowsFechas as $f)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($f->fecha)->translatedFormat('j \d\e F \d\e Y') }}</td>
+                        </tr>
+                    @endforeach
+                </table>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th class="text-center" colspan="2">Monto a pagar</th>
+                    </tr>
+                    <tr>
+                        <td width="30%" class="text-right">Subtotal:</td>
+                        <th class="text-black">${{ $data['precio'] }}</th>
+                    </tr>
+                    <tr>
+                        <td width="30%" class="text-right">Descuento aplicado:</td>
+                        <td><strong class="text-black">${{ $data['descuento'] }}</strong> - {{ $row->desc_descuento }} <i>({{ $row->descuento }}%)</i></td>
+                    </tr>
+                    <tr>
+                        <td width="30%" class="text-right">Monto a pagar</td>
+                        <th class="text-black">${{ $data['total'] }} MXN</th>
+                    </tr>
+                </table>
 
                 <label>Correo electrónico</label>
-                <input type="text" name="email" value="{{ $row->titular_email }}" placeholder="Correo electrónico">
+                <input type="email" name="email" value="{{ $row->titular_email }}" placeholder="Correo electrónico">
             </div>
 
             <div class="card mt-3">
 
-                    <img src="{{ asset('storage/openpay.png') }}" alt="Openpay by BBVA">
+                    <img src="{{ asset('mass/images/logo/openpay.png') }}" alt="Openpay by BBVA">
 
                     <h3 class="text-center">Pago con tarjeta de crédito o débito</h3>
 
                     <input type="hidden" name="token_id" id="token_id">
                     <input type="hidden" name="device_session_id" id="device_session_id">
-                    <input type="hidden" name="idnadador" value="{{ $id }}">
+                    <input type="hidden" name="curp" value="{{ $curp }}">
+                    <input type="hidden" name="time" value="{{ $time }}">
+                    <input type="hidden" name="idy" value="{{ $idy }}">
+                    <input type="hidden" name="idm" value="{{ $idm }}">
                     
                     <label>Nombre del titular</label>
                     <input type="text"  data-openpay-card="holder_name" placeholder="Como aparece en la tarjeta" required>
@@ -141,7 +170,10 @@
                     <label>Código de seguridad</label>
                     <input type="text" data-openpay-card="cvv2" placeholder="3 dígitos" required>
 
-                    <button id="pay-button">Pagar ahora</button>
+                    <button id="pay-button">
+                        <span class="btn-text">Pagar ahora</span>
+                        <span class="btn-spinner d-none"></span>
+                    </button>
             </div>
             
             </form>
@@ -152,28 +184,7 @@
 <script src="https://js.openpay.mx/openpay.v1.min.js"></script>
 <script src="https://js.openpay.mx/openpay-data.v1.min.js"></script>
 
-@section('plugins.Select2', true)
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      if (window.jQuery && $.fn.select2) {
-        $('.js-select2').select2();
-      }
-
-      $('select[name="idplan"]').on('change', function () {
-          const selectedOption = $(this).find('option:selected');
-          const precio = selectedOption.data('precio');
-          const inputAmount = $('input[name="amount"]');
-          
-          if (precio) {
-              inputAmount.val(parseFloat(precio).toFixed(2));
-          } else {
-              inputAmount.val('');
-          }
-      });
-
-    });
-
     OpenPay.setId('{{ $merchantId }}');
     OpenPay.setApiKey('{{ $publicKey }}');
     OpenPay.setSandboxMode({{ $production ? 'false' : 'true' }});
@@ -185,6 +196,22 @@
 
     const form = document.getElementById('payment-form');
     const payButton = document.getElementById('pay-button');
+    const btnText = payButton.querySelector('.btn-text');
+    const btnSpinner = payButton.querySelector('.btn-spinner');
+
+    const setLoading = (loading) => {
+        if (loading) {
+            payButton.disabled = true;
+            payButton.classList.add('is-loading');
+            btnText.textContent = 'Procesando pago...';
+            btnSpinner.classList.remove('d-none');
+        } else {
+            payButton.disabled = false;
+            payButton.classList.remove('is-loading');
+            btnText.textContent = 'Pagar ahora';
+            btnSpinner.classList.add('d-none');
+        }
+    };
 
     const successCallback = function(response) {
         const tokenId = response.data.id;
@@ -195,12 +222,12 @@
     const errorCallback = function(response) {
         let message = response.data?.description || response.message || "Error desconocido";
         alert("Error al generar token: " + message);
-        payButton.disabled = false;
+        setLoading(false);
     };
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        payButton.disabled = true;
+        setLoading(true);
 
         OpenPay.token.extractFormAndCreate(
             form,
@@ -210,5 +237,23 @@
     });
 </script>
 
+<style>
+    #pay-button {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
 
+#pay-button .btn-spinner {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+#pay-button.is-loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+</style>
 @stop
